@@ -14,7 +14,7 @@ public class Main extends PApplet {
 	
 	public void setup() {
 		this.size(fullScreenWidth, fullScreenHeight);
-		this.background(0, 0, 0);
+		this.background(255, 255, 255);
 	}
 	
 	public void draw() {
