@@ -3,7 +3,6 @@ package cs424.windblows.gui;
 import processing.core.PImage;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Variable;
-import static cs424.windblows.application.Constants.*;
 
 public class Map extends Sketch {
 
@@ -23,5 +22,11 @@ public class Map extends Sketch {
 		parent.popStyle();
 	}
 
+	void zoom() {
+		
+	}
 	
+	void pan() {
+		
+	}
 }

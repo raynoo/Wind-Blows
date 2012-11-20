@@ -1,13 +1,17 @@
 package cs424.windblows.application;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import omicronAPI.OmicronAPI;
 import omicronAPI.OmicronTouchListener;
 import processing.core.PApplet;
 import processing.core.PFont;
+import cs424.windblows.gui.ControlPanel;
 import cs424.windblows.gui.Map;
+import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
+import cs424.windblows.gui.WeatherGraphic;
 
 import static cs424.windblows.application.Constants.*;
 
@@ -63,6 +67,9 @@ public class Main extends PApplet implements OmicronTouchListener {
 		// initialize the gui elements
 		initApp();
 		initMap();
+		initPlaybackButtons();
+		initKeywordPanel();
+		initWeatherPanel();
 		omicronManager.setTouchListener(this);
 	}
 	
@@ -92,10 +99,66 @@ public class Main extends PApplet implements OmicronTouchListener {
 		addSketch(map);
 	}
 	
+	void initKeywordPanel() {
+		Variable data = new Variable();
+		data.setPlot(keywordPanelX, keywordPanelY, keywordPanelX+keywordPanelWidth, 
+				keywordPanelY+keywordPanelHeight);
+		data.setParent(this);
+		ControlPanel cp = new ControlPanel(data);
+		cp.setActive(true);
+		addSketch(cp);
+	}
+	
+	void initWeatherPanel() {
+		Variable data = new Variable();
+		data.setPlot(weatherGraphicX, weatherGraphicY, weatherGraphicX+weatherGraphiclWidth, 
+				weatherGraphicY+weatherGraphicHeight);
+		data.setParent(this);
+		WeatherGraphic weather = new WeatherGraphic(data);
+		weather.setActive(true);
+		addSketch(weather);
+	}
+	
+	void initPlaybackButtons() {
+		
+		Variable b1 = new Variable();
+		int x=playButtonX;
+		b1.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
+		b1.setParent(this);
+		
+		Variable b2 = new Variable();
+		x += playButtonWidth+5;
+		b2.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
+		b2.setParent(this);
+		
+		Variable b3 = new Variable();
+		x += playButtonWidth+5;
+		b3.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
+		b3.setParent(this);
+		
+		Variable b4 = new Variable();
+		x += playButtonWidth+5;
+		b4.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
+		b4.setParent(this);
+		
+		Variable b5 = new Variable();
+		x += playButtonWidth+5;
+		b5.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
+		b5.setParent(this);
+		
+		Playback playback = new Playback(b1, b2, b3, b4, b5);
+		playback.setActive(true);
+
+		addSketch(playback);
+	}
+	
 	void addSketch(Sketch sketch) {
 		this.sketches.add(sketch);
 	}
 
+	void addSketches(List<Sketch> sketch) {
+		this.sketches.addAll(sketch);
+	}
 	
 	@Override
 	public void draw() {
