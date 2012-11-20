@@ -1,11 +1,15 @@
 package cs424.windblows.application;
+
 import java.util.ArrayList;
 
 import omicronAPI.OmicronAPI;
 import omicronAPI.OmicronTouchListener;
 import processing.core.PApplet;
 import processing.core.PFont;
+import cs424.windblows.gui.Map;
 import cs424.windblows.gui.Sketch;
+
+import static cs424.windblows.application.Constants.*;
 
 /**
  * TODO
@@ -53,12 +57,12 @@ public class Main extends PApplet implements OmicronTouchListener {
 			Constants.SCALE = 6;
 		}
 		else {
-			size(8160/6, 384); 
-			//size(8160/4, 384*3);
+			size(8160/6, 384);
 			Constants.SCALE = 1;
 		}
 		// initialize the gui elements
 		initApp();
+		initMap();
 		omicronManager.setTouchListener(this);
 	}
 	
@@ -75,12 +79,28 @@ public class Main extends PApplet implements OmicronTouchListener {
 	
 		
 	}
+	
+	void initMap() {
+		Variable mapData = new Variable();
+		mapData.setPlot(mapPanelX, mapPanelY, mapPanelWidth-mapPanelX, mapPanelHeight-mapPanelY);
+		mapData.setParent(this);
+		mapData.setLabel("Map");
+		
+		Map map = new Map(mapData);
+		map.setActive(true);
+
+		addSketch(map);
+	}
+	
+	void addSketch(Sketch sketch) {
+		this.sketches.add(sketch);
+	}
 
 	
 	@Override
 	public void draw() {
 		// set the background
-		background(255);
+		background(EnumColor.DARK_GRAY.getValue());
 	
 		// display all the GUI elements
 		for(Sketch sk : sketches){

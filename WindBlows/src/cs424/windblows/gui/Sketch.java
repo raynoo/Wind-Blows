@@ -18,7 +18,7 @@ public class Sketch {
 	/**
 	 * This is a reference to Main instance, which has all the processing methods and variables.
 	 */
-	protected PApplet parent;
+	protected static PApplet parent;
 	
 	/**
 	 * display method checks this variable before drawing.
@@ -65,5 +65,10 @@ public class Sketch {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	
+	public static PApplet getParent() {
+		return parent;
+	}
+	
 }
 	
