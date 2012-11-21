@@ -1,6 +1,7 @@
 package cs424.windblows.gui;
 
 import processing.core.PApplet;
+import static cs424.windblows.application.Constants.SCALE;
 import cs424.windblows.application.Variable;
 
 /**
@@ -58,6 +59,12 @@ public class Sketch {
 		
 	}
 	
+	public boolean containsPoint(float x, float y) {
+		if(x > plotX1 && x < plotX2 && y > plotY1 && y < plotY2)
+			return true;
+		return false;
+	}
+	
 	public boolean isActive() {
 		return isActive;
 	}
@@ -70,5 +77,8 @@ public class Sketch {
 		return parent;
 	}
 	
+	public float scale(float value) {
+		return value*SCALE;
+	}
 }
 	

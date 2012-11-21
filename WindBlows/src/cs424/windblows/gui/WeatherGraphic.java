@@ -19,7 +19,8 @@ public class WeatherGraphic extends Sketch {
 		parent.fill(EnumColor.GRAY_T.getValue());
 		parent.rect(plotX1, plotY1, plotWidth, plotHeight);
 		weather = parent.loadShape("../images/weather.svg");
-		parent.shape(weather, plotX1+10, plotY1+10, plotWidth-20, plotHeight-20);
+		parent.shape(weather, plotX1+(plotWidth/2 - scale(35)), plotY1+scale(5), 
+				scale(70), scale(70));
 		parent.popStyle();
 	}
 }

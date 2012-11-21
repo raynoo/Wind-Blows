@@ -37,10 +37,6 @@ public class Button extends Sketch {
 		parent.popStyle();
 	}
 	
-	public boolean containsPoint(float x, float y) {
-		return (x > plotX1 && x < plotX2 && y > plotY1 && y < plotY2);
-	}
-	
 	public void setPressed(boolean isPressed) {
 		this.isPressed = isPressed;
 	}

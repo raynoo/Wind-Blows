@@ -12,6 +12,7 @@ import cs424.windblows.gui.Map;
 import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
 import cs424.windblows.gui.WeatherGraphic;
+import cs424.windblows.listeners.MapListener;
 
 import static cs424.windblows.application.Constants.*;
 
@@ -35,7 +36,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 	
 	/*************************SKETCHES******************************/
 	
-
+	public Map map;
 	
 	protected ArrayList<Sketch> sketches = new ArrayList<Sketch>();
 	
@@ -93,7 +94,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		mapData.setParent(this);
 		mapData.setLabel("Map");
 		
-		Map map = new Map(mapData);
+		map = new Map(mapData);
 		map.setActive(true);
 
 		addSketch(map);
@@ -183,7 +184,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 	@Override
 	public void touchMove(int ID, float xPos, float yPos, float xWidth, float yWidth){
 		OmicronTouchListener listener = getValidListener(xPos, yPos);
-		listener.touchMove(ID, xPos, yPos, xWidth, yWidth);
+		if(listener != null)
+			listener.touchMove(ID, xPos, yPos, xWidth, yWidth);
 	}
 
 	@Override
@@ -200,7 +202,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 	 * @return
 	 */
 	public OmicronTouchListener getValidListener(float xPos, float yPos){
-		
+		if(map.containsPoint(xPos, yPos))
+			return new MapListener(this);
 		return null;
 	}
 }
