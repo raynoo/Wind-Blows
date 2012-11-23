@@ -115,6 +115,9 @@ public class LexicalProcessing {
 				 words.put(pairs.getKey().toString(), tempwords);		        
 			}
 			
+			int id = 1;
+			String keyWord = "";
+			
 			while (true) {
 				
 		        String line_input = in.readLine();
@@ -165,7 +168,9 @@ public class LexicalProcessing {
 		        	System.out.println("Old : " + line);
 			        System.out.println("new : " + line_out);
 			        
-		        	out.write(pre + line_out);
+			        pre = pre.replace(" ", ",");
+			        out.write(id + "," + pre + line_input.replace("'", "") + keyWord);
+			        id++;
 		        	out.newLine();
 		        }
 		        
