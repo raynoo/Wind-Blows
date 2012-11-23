@@ -158,6 +158,8 @@ public class LexicalProcessing {
 			        		
 			        		includeLine = true;
 			        		line_out = line.replaceAll(wrd, pairs.getKey().toString());
+			        		keyWord = pairs.getKey().toString();
+			        		continue;
 			        	}
 			        	
 			        }
