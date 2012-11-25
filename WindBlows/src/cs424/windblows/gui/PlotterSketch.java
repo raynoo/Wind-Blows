@@ -59,8 +59,9 @@ public class PlotterSketch extends Sketch implements OmicronTouchListener, Filte
 		// loop through the tweet's in the list
 		parent.fill(this.dotColor.getRGB());
 		for(Tweet t : data){
-			float x = PApplet.map((float)t.getLat(), lat1, lat2, plotX1, plotX1 + width);
-			float y = PApplet.map((float)t.getLon(), lon1, lon2, plotY1, plotY1 + height);
+			float y = PApplet.map((float)t.getLat(), lat1, lat2, plotY1, plotY1 + height);
+			float x = PApplet.map((float)t.getLon(), lon1, lon2, plotX1, plotX1 + width);
+			//System.out.println((float)t.getLat() + "- " + x + " - " + y);
 			parent.ellipse(x, y, dotSize, dotSize);
 		}
 	}
