@@ -80,5 +80,16 @@ public class Sketch {
 	public float scale(float value) {
 		return value*SCALE;
 	}
+	
+	/**
+	 * Override this method to check if the touch is present in this Gui element.
+	 * Not necessary when Omicron touch listener is not implemented.
+	 * @param xPos
+	 * @param yPos
+	 * @return
+	 */
+	public boolean isTouchValid(float xPos, float yPos){
+		return false;
+	}
 }
 	
