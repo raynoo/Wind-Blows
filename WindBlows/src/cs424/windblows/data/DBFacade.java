@@ -21,8 +21,6 @@ public class DBFacade {
 	
 	protected static SQLite db;
 	
-	protected HashMap<Date, ArrayList<Tweet>> data;
-	
 	
 	private DBFacade(){
 		db = new SQLite(parent, "data/db_windblows.sqlite");
