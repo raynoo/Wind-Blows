@@ -12,6 +12,7 @@ import cs424.windblows.gui.Map;
 import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
 import cs424.windblows.gui.WeatherGraphic;
+import cs424.windblows.gui.WordCloud;
 import cs424.windblows.listeners.MapListener;
 
 import static cs424.windblows.application.Constants.*;
@@ -71,6 +72,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		initPlaybackButtons();
 		initKeywordPanel();
 		initWeatherPanel();
+		initWordCloudPanel();
 		omicronManager.setTouchListener(this);
 	}
 	
@@ -98,6 +100,18 @@ public class Main extends PApplet implements OmicronTouchListener {
 		map.setActive(true);
 
 		addSketch(map);
+	}
+	
+	void initWordCloudPanel() {
+		Variable data = new Variable();
+		data.setPlot(wcX, wcY, wcX+wcWidth, wcY+wcHeight);
+		data.setParent(this);
+		data.setLabel("Cloud");
+		
+		WordCloud wc = new WordCloud(data);
+		wc.setActive(true);
+		
+		addSketch(wc);
 	}
 	
 	void initKeywordPanel() {

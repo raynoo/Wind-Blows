@@ -16,14 +16,13 @@ public class MapListener implements OmicronTouchListener {
 	@Override
 	public void touchDown(int ID, float xPos, float yPos, float xWidth, float yWidth) {
 		
+		//on buttons
 		if(map.getZoomIn().containsPoint(xPos, yPos))
 			map.zoomIn();
 		else if(map.getZoomOut().containsPoint(xPos, yPos))
 			map.zoomOut();
-		else if(map.getPanUp().containsPoint(xPos, yPos)) {
-			
+		else if(map.getPanUp().containsPoint(xPos, yPos))
 			map.panUp();
-		}
 		else if(map.getPanDown().containsPoint(xPos, yPos))
 			map.panDown();
 		else if(map.getPanLeft().containsPoint(xPos, yPos))
@@ -31,6 +30,10 @@ public class MapListener implements OmicronTouchListener {
 		else if(map.getPanRight().containsPoint(xPos, yPos))
 			map.panRight();
 		
+		//on map
+		else {
+			System.out.println("x: " + xPos + ", y: " + yPos);
+		}
 	}
 
 	@Override

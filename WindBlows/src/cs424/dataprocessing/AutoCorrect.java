@@ -35,7 +35,7 @@ import java.io.FileWriter;
 import java.util.Iterator;
 import java.util.List;
 
-import sun.security.jgss.TokenTracker;
+//import sun.security.jgss.TokenTracker;
 
 public class AutoCorrect implements SpellCheckListener {
 
