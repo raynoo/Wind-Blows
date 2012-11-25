@@ -8,8 +8,10 @@ import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
 import cs424.windblows.data.DBFacade;
+import cs424.windblows.listeners.CheckBoxEventListener;
+import cs424.windblows.listeners.FilterListener;
 
-public class KeywordsSketch extends Sketch implements OmicronTouchListener{
+public class KeywordsSketch extends Sketch implements OmicronTouchListener, CheckBoxEventListener{
 
 	protected ArrayList<CheckBox> checks;
 	protected float xBuff = Utils.scale(20);
@@ -17,6 +19,7 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener{
 	
 	protected HashMap<Integer, String> keyMap;
 	
+	protected FilterListener listener;
 	
 	public KeywordsSketch(Variable data) {
 		super(data);
@@ -36,6 +39,7 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener{
 			dat.setPlot(x, y, 0, 0);
 			CheckBox c = new CheckBox(dat);
 			c.setId(key);
+			c.setListener(this);
 			checks.add(c);
 
 			y += yBuff;
@@ -89,5 +93,22 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener{
 		else return false;
 	}
 	
+	@Override
+	public void checkboxDisabled(int id) {
+		listener.categoryRemoved(id);
+	}
+	
+	@Override
+	public void checkboxEnabled(int id) {
+		listener.categoryAdded(id);
+	}
 
+	public FilterListener getListener() {
+		return listener;
+	}
+
+	public void setListener(FilterListener listener) {
+		this.listener = listener;
+	}
+	
 }

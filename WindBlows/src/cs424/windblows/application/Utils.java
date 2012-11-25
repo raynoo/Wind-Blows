@@ -1,5 +1,11 @@
 package cs424.windblows.application;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 /** 
  * Created with an intention to define all the utiliy methods
@@ -29,5 +35,66 @@ public class Utils {
 	public static boolean isPresent(float minVal, float maxVal, float val){
 		if(val < maxVal && val > minVal) return true;
 		else return false;
+	}
+	
+	/**
+	 * Implementation from floatTable
+	 * @param array
+	 */
+	public static void scrubQuotes(String[] array) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].length() > 2) {
+				// remove quotes at start and end, if present
+				if (array[i].startsWith("\"") && array[i].endsWith("\"")) {
+					array[i] = array[i].substring(1, array[i].length() - 1);
+				}
+			}
+			// make double quotes into single quotes
+			array[i] = array[i].replaceAll("\"\"", "\"");
+		}
+	}
+	
+	/**
+	 * Adds days to the given date
+	 * @param date
+	 * @param days
+	 * @return
+	 */
+	public static Date addDays(Date date, int days){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days); //minus number would decrement the days
+       
+        return cal.getTime();
+    }
+	
+	
+	/**
+	 * Returns date form of string in format mm/dd/yyyy
+	 * which is stored in database
+	 * @param date
+	 * @return
+	 */
+	public static Date getDate(String date){
+		Date d = null;
+		try {
+			d = new SimpleDateFormat("M/dd/yyyy", Locale.ENGLISH)
+							.parse(date);
+		} catch (ParseException e) {
+			System.out.println("ParseException - tried to parse " + date + ". Handle this ASAP. Exit 0.");
+			e.printStackTrace();
+			System.exit(0);
+		}
+		return d;
+	}
+	
+	/**
+	 * this is exact reverse of getDate
+	 * @param date
+	 * @return
+	 */
+	public static String getFormattedDate(Date date){
+		SimpleDateFormat df = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH);
+		return df.format(date);
 	}
 }

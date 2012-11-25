@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="jars/OmicronAPI.jar"/>
 	<classpathentry kind="lib" path="jars/SQLibrary.jar"/>
 	<classpathentry kind="lib" path="jars/sqlitejdbc-v056.jar"/>
+	<classpathentry kind="lib" path="jars/jaws-bin.jar"/>
+	<classpathentry kind="lib" path="jars/jazzy-0.5.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

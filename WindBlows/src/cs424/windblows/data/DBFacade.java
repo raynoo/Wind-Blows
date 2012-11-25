@@ -1,10 +1,11 @@
 package cs424.windblows.data;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import processing.core.PApplet;
+import cs424.windblows.application.Filter;
+import cs424.windblows.application.Utils;
 import de.bezier.data.sql.SQLite;
 
 
@@ -62,4 +63,49 @@ public class DBFacade {
 		}
 		return map;
 	}
+	
+	/**
+	 * Returns the Tweet's for a given date
+	 * TODO 1. modify this function so that it also takes in to account time.
+	 * 		2. also category id
+	 * 		3. identify the data which need to be fetched
+	 * @return ArrayList<Tweet>
+	 */
+	public ArrayList<Tweet> getTweets(Filter filter){
+		// convert the date to format 
+		StringBuffer sql = new StringBuffer();
+		sql.append("Select lat, long from Microblogs where ");
+		sql.append("date == '");
+		sql.append(Utils.getFormattedDate(filter.getDate()));
+		sql.append("' ");
+		
+		// add categories
+		if(filter.getCategories().size() > 0){
+			sql.append(" and categoryId in (");
+			boolean flag = false;
+			for(Integer cat : filter.getCategories()){
+				if(!flag) sql.append(cat);
+				else{
+					sql.append(", ");
+					sql.append(cat);
+				}
+				flag = true;
+			}
+			sql.append(")");
+		}
+		
+		//System.out.println(this.getClass() + " <DEBUG>" + sql.toString());
+		ArrayList<Tweet> list = new ArrayList<Tweet>();
+		if(db.connect()){
+			 db.query(sql.toString());
+			 while(db.next()) {
+				 Tweet t = new Tweet();
+				 t.setLat(db.getDouble("lat"));
+				 t.setLon(db.getDouble("long"));
+				 list.add(t);
+			 }
+		}
+		return list;
+	}
+	
 }

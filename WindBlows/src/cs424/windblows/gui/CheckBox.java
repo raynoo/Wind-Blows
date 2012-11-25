@@ -6,6 +6,7 @@ import processing.core.PShape;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
+import cs424.windblows.listeners.CheckBoxEventListener;
 
 class CheckBox extends Sketch implements OmicronTouchListener{
 	
@@ -13,7 +14,7 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 	protected boolean isSelected;
 	protected String label;
 	protected int id;
-	
+	protected CheckBoxEventListener listener;
 	
 	protected PShape check;
 	protected float imageSize = Utils.scale(15);
@@ -79,12 +80,24 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 		else{
 			if(isSelected){
 				isSelected = false;
+				listener.checkboxDisabled(this.id);
 			}
 			else {
 				isSelected = true;
+				listener.checkboxEnabled(this.id);
 			}
 		}
 	}
+
+	public CheckBoxEventListener getListener() {
+		return listener;
+	}
+
+
+	public void setListener(CheckBoxEventListener listener) {
+		this.listener = listener;
+	}
+
 
 	@Override
 	public void touchMove(int ID, float xPos, float yPos, float xWidth, float yWidth){

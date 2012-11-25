@@ -11,6 +11,7 @@ import cs424.windblows.data.DBFacade;
 import cs424.windblows.gui.ControlPanel;
 import cs424.windblows.gui.KeywordsSketch;
 import cs424.windblows.gui.Map;
+import cs424.windblows.gui.PlotterSketch;
 import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
 import cs424.windblows.gui.WeatherGraphic;
@@ -37,7 +38,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 	
 	
 	/*************************SKETCHES******************************/
-	
+	protected PlotterSketch plotter;
 	public Map map;
 	protected KeywordsSketch keywords;
 	
@@ -69,8 +70,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 			Constants.SCALE = 1;
 		}
 		// initialize the gui elements
-		initApp();
 		initMap();
+		initApp();
 		initPlaybackButtons();
 		//initKeywordPanel();
 		initWeatherPanel();
@@ -95,11 +96,18 @@ public class Main extends PApplet implements OmicronTouchListener {
 		data.setParent(this);
 		data.setPlot(0,0, (width * 3)/4, height);
 	
+		// set plotter sketch
+		data.setPlot(Constants.mapPanelX, Constants.mapPanelY, Constants.mapPanelWidth, Constants.mapPanelHeight);
+		plotter = new PlotterSketch(data);
+		plotter.setActive(true);
+		sketches.add(plotter);
+		
 		// init keywords sketch
 		data.setPlot(Constants.keywordPanelX, Constants.keywordPanelY, 
 				(Constants.keywordPanelWidth * 3)/2, Constants.keywordPanelHeight);
 		keywords = new KeywordsSketch(data);
 		keywords.setActive(true);
+		keywords.setListener(plotter);
 		sketches.add(keywords);
 		
 		// set map sketch
@@ -166,8 +174,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 		b4.setParent(this);
 		
 		Variable b5 = new Variable();
-		x += playButtonWidth+5;
-		b5.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
+		x += Constants.playButtonWidth+5;
+		b5.setPlot(x, Constants.playButtonY, Constants.playButtonWidth+x, Constants.playButtonHeight+Constants.playButtonY);
 		b5.setParent(this);
 		
 		Playback playback = new Playback(b1, b2, b3, b4, b5);
@@ -228,6 +236,9 @@ public class Main extends PApplet implements OmicronTouchListener {
 		
 		if(keywords.isTouchValid(xPos, yPos)){
 			return keywords;
+		}
+		else if(plotter.isTouchValid(xPos, yPos)){
+			return plotter;
 		}
 		
 		//if(map.containsPoint(xPos, yPos))
