@@ -27,16 +27,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.List;
 
-<<<<<<< HEAD
-//import sun.security.jgss.TokenTracker;
-=======
 import com.swabunga.spell.engine.SpellDictionary;
 import com.swabunga.spell.engine.SpellDictionaryHashMap;
 import com.swabunga.spell.event.SpellCheckEvent;
 import com.swabunga.spell.event.SpellCheckListener;
 import com.swabunga.spell.event.SpellChecker;
 import com.swabunga.spell.event.StringWordTokenizer;
->>>>>>> cf1c2811bd6355fe73405ef07b0bf20a1ec48376
 
 public class AutoCorrect implements SpellCheckListener {
 
