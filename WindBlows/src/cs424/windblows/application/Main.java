@@ -9,15 +9,12 @@ import processing.core.PApplet;
 import processing.core.PFont;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.gui.BackgroundSketch;
-import cs424.windblows.gui.ControlPanel;
 import cs424.windblows.gui.KeywordsSketch;
 import cs424.windblows.gui.Map;
-import cs424.windblows.gui.PlotterSketch;
 import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
 import cs424.windblows.gui.WeatherGraphic;
 import cs424.windblows.gui.WordCloud;
-import cs424.windblows.listeners.MapEventListener;
 
 import static cs424.windblows.application.Constants.*;
 
