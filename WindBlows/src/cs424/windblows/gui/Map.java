@@ -25,7 +25,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	float translateY = scale(10), translateX = scale(30);
 	
 	float imageCenterX, imageCenterY, zoomHeight, zoomWidth, currentCenterX, currentCenterY;
-	float currentTopLeftX, currentBottomRightX, currentTopLeftY, currentBottomRightY;
+	float currentImageTopLeftX, currentImageBottomRightX, currentImageTopLeftY, currentImageBottomRightY;
 	
 	int zoomLevel = 1, noMoreZoomIn = 5, noMoreZoomOut = 1;
 	Location[] boundaryLocations = new Location[2];
@@ -44,13 +44,21 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	
 	public Map(Variable data) {
 		super(data);
+		initMap();
+		initButtons();
+	}
+	
+	void initMap() {
 		this.mapImage = parent.loadImage("../WindBlows/images/Vastopolis_Map_greyscale.png");
 		this.imageCenterX = scale(mapWidth)/2;
 		this.imageCenterY = scale(mapHeight)/2;
 		this.zoomWidth = scale(mapWidth);
 		this.zoomHeight = scale(mapHeight);
 		
-		initButtons();
+		this.currentImageTopLeftX = imageCenterX - zoomWidth/2;
+		this.currentImageBottomRightX = imageCenterX + zoomWidth/2;
+		this.currentImageTopLeftY = imageCenterY - zoomHeight/2;
+		this.currentImageBottomRightY = imageCenterY + zoomWidth/2;
 	}
 	
 	void initButtons() {
@@ -111,8 +119,8 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 		parent.fill(EnumColor.RED.getValue());
 		
 		//draw truck crash location
-		updateBoundaries();
-		drawPoint(42.22655f, 93.42752f);
+//		updateBoundaries();
+//		drawPoint(42.22655f, 93.42752f);
 		
 		//plot points of present filters
 		drawDataPoints();
@@ -137,18 +145,21 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	
 	void updateBoundaries() {
 		updateCenter();
+				
+		currentImageTopLeftX = imageCenterX - zoomWidth/2; currentImageBottomRightX = imageCenterX + zoomWidth/2;
+		currentImageTopLeftY = imageCenterY - zoomHeight/2; currentImageBottomRightY = imageCenterY + zoomWidth/2;
 		
-		currentTopLeftX = imageCenterX - zoomWidth/2; currentBottomRightX = imageCenterX + zoomWidth/2;
-		currentTopLeftY = imageCenterY - zoomHeight/2; currentBottomRightY = imageCenterY + zoomWidth/2;
-		
-		float currentTopLeftLong = PApplet.map(currentTopLeftX, 0, zoomWidth, topLeftLon, bottomRightLon);
-		float currentTopLeftLat = PApplet.map(currentTopLeftY, 0, zoomHeight, topLeftLat, bottomRightLat);
+		float currentTopLeftLong = PApplet.map(currentImageTopLeftX, 0, zoomWidth, topLeftLon, bottomRightLon);
+		float currentTopLeftLat = PApplet.map(currentImageTopLeftY, 0, zoomHeight, topLeftLat, bottomRightLat);
 		boundaryLocations[0] = new Location(currentTopLeftLat, currentTopLeftLong);
+		System.out.println("Lat1: " + currentTopLeftLat + ", Long1: " + currentTopLeftLong);
 		
-		float currentBottomRightLong = PApplet.map(currentBottomRightX, 0, zoomWidth, topLeftLon, bottomRightLon);
-		float currentBottomRightLat = PApplet.map(currentBottomRightY, 0, zoomHeight, topLeftLat, bottomRightLat);
+		float currentBottomRightLong = PApplet.map(currentImageBottomRightX, 0, zoomWidth, topLeftLon, bottomRightLon);
+		float currentBottomRightLat = PApplet.map(currentImageBottomRightY, 0, zoomHeight, topLeftLat, bottomRightLat);
 		boundaryLocations[1] = new Location(currentBottomRightLat, currentBottomRightLong);
 		
+		curFilter.setBoundary(boundaryLocations);
+		filterChanged = true;
 	}
 	
 	//correct image position when zooming out of map center
@@ -171,8 +182,8 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	}
 	
 	public void drawPoint(float lat, float lon) {
-		float x = PApplet.map(lon, topLeftLon, bottomRightLon, currentTopLeftX, currentBottomRightX);
-		float y = PApplet.map(lat, topLeftLat, bottomRightLat, currentTopLeftY, currentBottomRightY);
+		float x = PApplet.map(lon, topLeftLon, bottomRightLon, currentImageTopLeftX, currentImageBottomRightX);
+		float y = PApplet.map(lat, topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
 		
 		parent.pushStyle();
 		parent.stroke(EnumColor.DARK_GRAY.getValue());
@@ -188,17 +199,19 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 			markers = new ArrayList<Marker>();
 			
 			for(Tweet t : tweetData) {
-				float x = PApplet.map((float)t.getLon(), topLeftLon, bottomRightLon, currentTopLeftX, currentBottomRightX);
-				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentTopLeftY, currentBottomRightY);
+				float x = PApplet.map((float)t.getLon(), topLeftLon, bottomRightLon, currentImageTopLeftX, currentImageBottomRightX);
+				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
 
 				markers.add(new Marker(x, y, Utils.scale(10), this.parent));
 			}
 			filterChanged = false;
 		}
+		
 		for(Marker m : markers) {
 			m.setColor(EnumColor.RED_T.getValue());
 			m.draw();
 		}
+//		System.out.println("Filtered data size: " + markers.size());
 	}
 	
 	//keyword panel can update this way
@@ -222,7 +235,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 			
 			zoomLevel++;
 			updateBoundaries();
-			filterChanged = true;
 		}
 	}
 	
@@ -233,7 +245,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 
 			zoomLevel--;
 			updateBoundaries();
-			filterChanged = true;
 		}
 	}
 
@@ -242,7 +253,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 			imageCenterY += translateY;
 		
 		updateBoundaries();
-		filterChanged = true;
 	}
 	
 	public void panDown() {
@@ -250,7 +260,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 			imageCenterY -= translateY;
 		
 		updateBoundaries();
-		filterChanged = true;
 	}
 	
 	public void panLeft() {
@@ -258,7 +267,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 			imageCenterX += translateX;
 		
 		updateBoundaries();
-		filterChanged = true;
 	}
 	
 	public void panRight() {
@@ -266,38 +274,11 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 			imageCenterX -= translateX;
 		
 		updateBoundaries();
-		filterChanged = true;
 	}
-	
-	public Button getZoomIn() {
-		return zoomIn;
-	}
-
-	public Button getZoomOut() {
-		return zoomOut;
-	}
-
-	public Button getPanLeft() {
-		return panLeft;
-	}
-
-	public Button getPanUp() {
-		return panUp;
-	}
-
-	public Button getPanRight() {
-		return panRight;
-	}
-
-	public Button getPanDown() {
-		return panDown;
-	}
-
 	
 	@Override
 	public void categoryAdded(int categoryId) {
 		curFilter.addCategory(categoryId);
-		tweetData = DBFacade.getInstance().getTweets(curFilter);
 		filterChanged = true;
 	}
 	
@@ -305,7 +286,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	@Override
 	public void categoryRemoved(int categoryId) {
 		curFilter.removeCategory(categoryId);
-		tweetData = DBFacade.getInstance().getTweets(curFilter);
 		filterChanged = true;
 	}
 	
@@ -313,18 +293,33 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	@Override
 	public void touchDown(int arg0, float arg1, float arg2, float arg3, float arg4) {
 		
-		if(currentDate.equals(max)) {
-			currentDate = min;
-			curFilter.setDate(min);
-		}
-		else {
-			currentDate = Utils.addDays(currentDate, 1);
-			curFilter.setDate(currentDate);
-		}
-//		tweetData = DBFacade.getInstance().getTweets(curFilter);
-		filterChanged = true;
-		System.out.println(currentDate);
+		//on buttons
+		if(zoomIn.containsPoint(arg1, arg2))
+			zoomIn();
+		else if(zoomOut.containsPoint(arg1, arg2))
+			zoomOut();
+		else if(panUp.containsPoint(arg1, arg2))
+			panUp();
+		else if(panDown.containsPoint(arg1, arg2))
+			panDown();
+		else if(panLeft.containsPoint(arg1, arg2))
+			panLeft();
+		else if(panRight.containsPoint(arg1, arg2))
+			panRight();
 		
+		//on map
+		else {
+			if(currentDate.equals(max)) {
+				currentDate = min;
+				curFilter.setDate(min);
+			}
+			else {
+				currentDate = Utils.addDays(currentDate, 1);
+				curFilter.setDate(currentDate);
+			}
+			filterChanged = true;
+			System.out.println(currentDate);
+		}
 	}
 	
 

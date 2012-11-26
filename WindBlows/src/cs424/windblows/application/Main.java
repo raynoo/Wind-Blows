@@ -17,7 +17,7 @@ import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
 import cs424.windblows.gui.WeatherGraphic;
 import cs424.windblows.gui.WordCloud;
-import cs424.windblows.listeners.MapListener;
+import cs424.windblows.listeners.MapEventListener;
 
 import static cs424.windblows.application.Constants.*;
 
@@ -250,12 +250,9 @@ public class Main extends PApplet implements OmicronTouchListener {
 		if(keywords.isTouchValid(xPos, yPos)){
 			return keywords;
 		}
-//		else if(plotter.isTouchValid(xPos, yPos)){
-//			return plotter;
-//		}
 		
 		else if(map.isTouchValid(xPos, yPos))
-			return new MapListener(this);
+			return map;
 		
 		return null;
 	}

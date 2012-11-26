@@ -95,6 +95,13 @@ public class DBFacade {
 			sql.append(")");
 		}
 		
+		if(filter.getTopLeftLat() != null) {
+			sql.append(" and lat < " + filter.getTopLeftLat());
+			sql.append(" and lat > " + filter.getBottomRightLat());
+			sql.append(" and long < " + filter.getTopLeftLong());
+			sql.append(" and long > " + filter.getBottomRightLong());
+		}
+		
 		//System.out.println(this.getClass() + " <DEBUG>" + sql.toString());
 		ArrayList<Tweet> list = new ArrayList<Tweet>();
 		if(db.connect()){
