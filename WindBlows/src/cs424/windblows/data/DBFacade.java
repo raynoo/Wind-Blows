@@ -2,6 +2,7 @@ package cs424.windblows.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import processing.core.PApplet;
 import cs424.windblows.application.Filter;
@@ -108,4 +109,24 @@ public class DBFacade {
 		return list;
 	}
 	
+	
+	/**
+	 * Returns all tweets - for data processing
+	 * @return HashMap<Integer,String>
+	 */
+	public HashMap<Integer,String> getAllTweets(){
+		
+		String sql = "Select tweet_id,tweet from Microblogs;";			
+		
+		HashMap<Integer,String> tweetMap = new HashMap<Integer,String>();
+		if(db.connect()){
+			 db.query(sql.toString());
+			 while(db.next()) {
+				 Integer tweet_id = db.getInt("tweet_id");	
+				 String tweet = db.getString("tweet");				 
+				 tweetMap.put(tweet_id,tweet);
+			 }
+		}
+		return tweetMap;
+	}	
 }
