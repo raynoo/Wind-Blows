@@ -28,11 +28,11 @@ public class Button extends Sketch {
 		else
 			parent.fill(EnumColor.OFFWHITE.getValue());
 		
-		parent.rect(plotX1, plotY1, plotWidth, plotHeight);
-		parent.textSize(textSize);
+		parent.rect(scale(plotX1), scale(plotY1), scale(plotWidth), scale(plotHeight));
+		parent.textSize(scale(textSize));
 		parent.textAlign(PApplet.CENTER, PApplet.CENTER);
 		parent.fill(EnumColor.BLACK.getValue());
-		parent.text(text, plotX1+plotWidth/2f, plotY1+plotHeight/2f);
+		parent.text(text, scale(plotX1+plotWidth/2f), scale(plotY1+plotHeight/2f));
 		
 		parent.popStyle();
 	}
@@ -47,6 +47,12 @@ public class Button extends Sketch {
 	
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public boolean containsPoint(float xPos, float yPos) {
+		if(xPos > plotX1 && xPos < plotX2 && yPos > plotY1 && yPos < plotY2)
+			return true;
+		return false;
 	}
 
 }

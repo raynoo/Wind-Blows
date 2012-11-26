@@ -11,7 +11,10 @@ public enum EnumColor {
 	WHITE(255,255,255),
 	OFFWHITE(216,216,216),
 	BLACK(0,0,0),
-	RED(255,153,204);
+	RED(170,42,40),
+	DARK_RED(85,21,20),
+	PINK(255,153,204),
+	RED_T(170,42,40,200);
 	
 	int color;
 

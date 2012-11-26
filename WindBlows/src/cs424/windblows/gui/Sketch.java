@@ -59,12 +59,6 @@ public class Sketch {
 		
 	}
 	
-	public boolean containsPoint(float x, float y) {
-		if(x > plotX1 && x < plotX2 && y > plotY1 && y < plotY2)
-			return true;
-		return false;
-	}
-	
 	public boolean isActive() {
 		return isActive;
 	}

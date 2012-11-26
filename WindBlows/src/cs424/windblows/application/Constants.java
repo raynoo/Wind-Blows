@@ -60,4 +60,11 @@ public class Constants {
 	public static int weatherGraphicY = 0;
 	public static int weatherGraphiclWidth = 215;
 	public static int weatherGraphicHeight = 85;
+	
+	//Background to draw over map
+	public static int backX1 = 640;
+	public static int backY1 = 0;
+	public static int backX2 = 1360;
+	public static int backY2 = 384;
+	//w:780 h:384
 }

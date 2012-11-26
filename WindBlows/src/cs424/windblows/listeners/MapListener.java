@@ -32,6 +32,7 @@ public class MapListener implements OmicronTouchListener {
 		
 		//on map
 		else {
+			map.touchDown(ID, xPos, yPos, xWidth, yWidth);
 			System.out.println("x: " + xPos + ", y: " + yPos);
 		}
 	}

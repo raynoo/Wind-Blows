@@ -29,7 +29,7 @@ public class WordCloud extends Sketch {
 		this.minFontSize = scale(15);
 		this.maxFontSize = scale(50);
 		this.font = parent.createFont("Helvetica", maxFontSize, true);
-		this.fontColor = EnumColor.RED.getValue();
+		this.fontColor = EnumColor.DARK_RED.getValue();
 
 		getData();
 	}

@@ -8,6 +8,7 @@ import omicronAPI.OmicronTouchListener;
 import processing.core.PApplet;
 import processing.core.PFont;
 import cs424.windblows.data.DBFacade;
+import cs424.windblows.gui.BackgroundSketch;
 import cs424.windblows.gui.ControlPanel;
 import cs424.windblows.gui.KeywordsSketch;
 import cs424.windblows.gui.Map;
@@ -39,7 +40,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 	
 	
 	/*************************SKETCHES******************************/
-	protected PlotterSketch plotter;
+//	protected PlotterSketch plotter;
 	public Map map;
 	protected KeywordsSketch keywords;
 	
@@ -70,13 +71,17 @@ public class Main extends PApplet implements OmicronTouchListener {
 			size(8160/6, 384);
 			Constants.SCALE = 1;
 		}
+		
 		// initialize the gui elements
-		initMap();
 		initApp();
-		initPlaybackButtons();
-		//initKeywordPanel();
+		
+		initMap();
+		initBackgroundPanel();//have to be called right after map to draw over the spilled-over map
+		initKeywordPanel();
+		initPlaybackPanel();
 		initWeatherPanel();
 		initWordCloudPanel();
+		
 		omicronManager.setTouchListener(this);
 	}
 	
@@ -93,37 +98,23 @@ public class Main extends PApplet implements OmicronTouchListener {
 		
 		// initialize dbfacade
 		DBFacade.setPApplet(this);
-		
+	}
+	
+	void initKeywordPanel() {
+		// init keywords sketch
 		Variable data = new Variable();
 		data.setParent(this);
-		data.setPlot(0,0, (width * 3)/4, height);
-	
-		// set plotter sketch
-		data.setPlot(Constants.mapPanelX, Constants.mapPanelY, Constants.mapPanelWidth, Constants.mapPanelHeight);
-		plotter = new PlotterSketch(data);
-		plotter.setActive(true);
-		sketches.add(plotter);
-		
-		// init keywords sketch
 		data.setPlot(Constants.keywordPanelX, Constants.keywordPanelY, 
 				(Constants.keywordPanelWidth * 3)/2, Constants.keywordPanelHeight);
 		keywords = new KeywordsSketch(data);
 		keywords.setActive(true);
-		keywords.setListener(plotter);
+		keywords.setListener(map);
 		sketches.add(keywords);
-		
-		// set map sketch
-	//	map = new MapSkectch(data);
-	//	map.setActive(true);
-	//	sketches.add(map);
-		
-		
 	}
-
 		
 	void initMap() {
 		Variable mapData = new Variable();
-		mapData.setPlot(Constants.mapPanelX, Constants.mapPanelY, Constants.mapPanelWidth-Constants.mapPanelX, Constants.mapPanelHeight-Constants.mapPanelY);
+		mapData.setPlot(mapPanelX, mapPanelY, mapPanelWidth-mapPanelX, mapPanelHeight-mapPanelY);
 		mapData.setParent(this);
 		mapData.setLabel("Map");
 		
@@ -145,57 +136,60 @@ public class Main extends PApplet implements OmicronTouchListener {
 		addSketch(wc);
 	}
 	
-	void initKeywordPanel() {
-		Variable data = new Variable();
-		data.setPlot(Constants.keywordPanelX, Constants.keywordPanelY, Constants.keywordPanelX+Constants.keywordPanelWidth, 
-				Constants.keywordPanelY+Constants.keywordPanelHeight);
-		data.setParent(this);
-		ControlPanel cp = new ControlPanel(data);
-		cp.setActive(true);
-		addSketch(cp);
-	}
-	
 	void initWeatherPanel() {
 		Variable data = new Variable();
-		data.setPlot(Constants.weatherGraphicX, Constants.weatherGraphicY, Constants.weatherGraphicX+Constants.weatherGraphiclWidth, 
-				Constants.weatherGraphicY+Constants.weatherGraphicHeight);
+		data.setPlot(weatherGraphicX, weatherGraphicY, weatherGraphicX+weatherGraphiclWidth, 
+				weatherGraphicY+weatherGraphicHeight);
 		data.setParent(this);
 		WeatherGraphic weather = new WeatherGraphic(data);
 		weather.setActive(true);
 		addSketch(weather);
 	}
 	
-	void initPlaybackButtons() {
+	void initPlaybackPanel() {
+		//TODO: create a sketch for the entire panel
 		
 		Variable b1 = new Variable();
-		int x=Constants.playButtonX;
-		b1.setPlot(x, Constants.playButtonY, Constants.playButtonWidth+x, Constants.playButtonHeight+Constants.playButtonY);
+		int x=playButtonX;
+		b1.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
 		b1.setParent(this);
 		
 		Variable b2 = new Variable();
-		x += Constants.playButtonWidth+5;
-		b2.setPlot(x, Constants.playButtonY, Constants.playButtonWidth+x, Constants.playButtonHeight+Constants.playButtonY);
+		x += playButtonWidth+5;
+		b2.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
 		b2.setParent(this);
 		
 		Variable b3 = new Variable();
-		x += Constants.playButtonWidth+5;
-		b3.setPlot(x, Constants.playButtonY, Constants.playButtonWidth+x, Constants.playButtonHeight+Constants.playButtonY);
+		x += playButtonWidth+5;
+		b3.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
 		b3.setParent(this);
 		
 		Variable b4 = new Variable();
-		x += Constants.playButtonWidth+5;
-		b4.setPlot(x, Constants.playButtonY, Constants.playButtonWidth+x, Constants.playButtonHeight+Constants.playButtonY);
+		x += playButtonWidth+5;
+		b4.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
 		b4.setParent(this);
 		
 		Variable b5 = new Variable();
-		x += Constants.playButtonWidth+5;
-		b5.setPlot(x, Constants.playButtonY, Constants.playButtonWidth+x, Constants.playButtonHeight+Constants.playButtonY);
+		x += playButtonWidth+5;
+		b5.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
 		b5.setParent(this);
 		
 		Playback playback = new Playback(b1, b2, b3, b4, b5);
 		playback.setActive(true);
 
 		addSketch(playback);
+	}
+	
+	//to redraw the background to draw over the zoomed in map
+	void initBackgroundPanel() {
+		Variable data = new Variable();
+		data.setPlot(backX1, backY1, backX2, backY2);
+		data.setParent(this);
+		
+		BackgroundSketch back = new BackgroundSketch(data);
+		back.setActive(true);
+		
+		addSketch(back);
 	}
 	
 	void addSketch(Sketch sketch) {
@@ -223,12 +217,15 @@ public class Main extends PApplet implements OmicronTouchListener {
 	@Override
 	public void touchDown(int ID, float xPos, float yPos, float xWidth, float yWidth){
 		OmicronTouchListener listener = getValidListener(xPos, yPos);
-		listener.touchDown(ID, xPos, yPos, xWidth, yWidth);
+		
+		if(listener != null)
+			listener.touchDown(ID, xPos, yPos, xWidth, yWidth);
 	}
 
 	@Override
 	public void touchMove(int ID, float xPos, float yPos, float xWidth, float yWidth){
 		OmicronTouchListener listener = getValidListener(xPos, yPos);
+		
 		if(listener != null)
 			listener.touchMove(ID, xPos, yPos, xWidth, yWidth);
 	}
@@ -236,7 +233,9 @@ public class Main extends PApplet implements OmicronTouchListener {
 	@Override
 	public void touchUp(int ID, float xPos, float yPos, float xWidth, float yWidth){
 		OmicronTouchListener listener = getValidListener(xPos, yPos);
-		listener.touchUp(ID, xPos, yPos, xWidth, yWidth);
+		
+		if(listener != null)
+			listener.touchUp(ID, xPos, yPos, xWidth, yWidth);
 	}
 	
 	/**
@@ -251,12 +250,13 @@ public class Main extends PApplet implements OmicronTouchListener {
 		if(keywords.isTouchValid(xPos, yPos)){
 			return keywords;
 		}
-		else if(plotter.isTouchValid(xPos, yPos)){
-			return plotter;
-		}
+//		else if(plotter.isTouchValid(xPos, yPos)){
+//			return plotter;
+//		}
 		
-		//if(map.containsPoint(xPos, yPos))
+		else if(map.isTouchValid(xPos, yPos))
 			return new MapListener(this);
-		//return null;
+		
+		return null;
 	}
 }
