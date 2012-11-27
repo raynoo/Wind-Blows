@@ -1,6 +1,7 @@
 package cs424.windblows.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -139,5 +140,46 @@ public class DBFacade {
 			 }
 		}
 		return tweetMap;
-	}	
+	}
+	
+	public HashMap<String, Integer> getKeywordCount(Filter filter) {
+		HashMap<String, Integer> tweetCount = new HashMap<String, Integer>();
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("select category, tweetcount from category");
+		
+//		if(filter.getDate() != null) {
+//			sql.append(" and m.date == '");
+//			sql.append(Utils.getFormattedDate(filter.getDate()));
+//			sql.append("' ");
+//		}
+		
+		// add categories
+		if(filter.getCategories().size() > 0) {
+			sql.append(" where categoryid in (");
+			boolean flag = false;
+			for(Integer cat : filter.getCategories()) {
+				if(!flag) sql.append(cat);
+				else {
+					sql.append(", ");
+					sql.append(cat);
+				}
+				flag = true;
+			}
+			sql.append(")");
+		}
+		
+		System.out.println(sql.toString());
+		
+		if(db.connect()) {
+			 db.query(sql.toString());
+			 
+			 while(db.next()) {
+				 String category = db.getString("category");	
+				 Integer count = db.getInt("tweetcount");				 
+				 tweetCount.put(category, count);
+			 }
+		}
+		return tweetCount;
+	}
 }

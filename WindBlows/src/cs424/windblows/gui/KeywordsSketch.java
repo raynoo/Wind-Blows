@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import omicronAPI.OmicronTouchListener;
+import processing.core.PApplet;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
@@ -19,7 +20,7 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	
 	protected HashMap<Integer, String> keyMap;
 	
-	protected FilterListener listener;
+	protected ArrayList<FilterListener> listeners = new ArrayList<FilterListener>();
 	
 	public KeywordsSketch(Variable data) {
 		super(data);
@@ -60,7 +61,7 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	protected void draw() {
 		parent.pushStyle();
 		parent.fill(EnumColor.OFFWHITE.getValue());
-		parent.rect(plotX1, plotY1, plotX2, plotY2, Utils.scale(10));
+		parent.rect(plotX1, plotY1, plotX2, plotY2);
 		
 		for(CheckBox box : checks){
 			box.draw();
@@ -95,20 +96,22 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	
 	@Override
 	public void checkboxDisabled(int id) {
-		listener.categoryRemoved(id);
+		for(FilterListener f : listeners)
+			f.categoryRemoved(id);
 	}
 	
 	@Override
 	public void checkboxEnabled(int id) {
-		listener.categoryAdded(id);
+		for(FilterListener f : listeners)
+			f.categoryAdded(id);
 	}
 
-	public FilterListener getListener() {
-		return listener;
-	}
+//	public FilterListener getListener() {
+//		return listener;
+//	}
 
 	public void setListener(FilterListener listener) {
-		this.listener = listener;
+		this.listeners.add(listener);
 	}
 	
 }

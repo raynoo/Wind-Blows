@@ -32,7 +32,7 @@ public class Marker implements OmicronTouchListener {
 		p.pushStyle();
 		p.stroke(EnumColor.DARK_RED.getValue());
 		p.strokeWeight(Utils.scale(1f));
-		p.fill(color, 150);
+		p.fill(color);
 		p.ellipse(centerX, centerY, 2*radius, 2*radius);
 		p.popStyle();
 	}
