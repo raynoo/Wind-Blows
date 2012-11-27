@@ -3,10 +3,13 @@ package cs424.windblows.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import processing.core.PApplet;
+import cs424.windblows.application.Constants;
 import cs424.windblows.application.Filter;
 import cs424.windblows.application.Utils;
 import de.bezier.data.sql.SQLite;
@@ -144,6 +147,66 @@ public class DBFacade {
 		}
 		return tweetMap;
 	}
+	
+	public HashMap<String,Integer> getCategoryCounts(Filter filter) {
+        // TODO Auto-generated method stub
+
+        StringBuilder sql = new StringBuilder();
+        HashMap<String,Integer> counts = new HashMap<String,Integer>();
+        Date minDate = Utils.getDate(Constants.minDate);
+        Date maxDate = Utils.getDate(Constants.maxDate);                
+        int i = 1;
+        
+        for(Date d = minDate; !d.after(maxDate); d = Utils.addDays(d, 1), i++){
+                counts.put(Utils.getFormattedDateMonth(d), 0);
+        }
+        
+        //sql.append("select A.date,count(A.tweet_id) as count from Microblogs A inner join " +
+        //              "TweetCategory B on A.tweet_id = B.tweet_id where ");
+        
+        sql.append("select A.date,count(A.tweet_id) as count from Microblogs A inner join " +
+                        "TweetCategory B on A.tweet_id = B.tweet_id where keyword_id = 6 group by A.date ");
+        
+        // add categories
+        /*if(filter.getCategories().size() > 0){
+                sql.append(" B.Keyword_id in (");
+                boolean flag = false;
+                for(Integer cat : filter.getCategories()){
+                        if(!flag) sql.append(cat);
+                        else{
+                                sql.append(", ");
+                                sql.append(cat);
+                        }
+                        flag = true;
+                }
+                sql.append(")");
+        }
+        else {
+                return counts; // returns if no category was selected
+        }
+        if(filter.getTopLeftLat() != null) {
+                sql.append(" and A.lat < " + filter.getTopLeftLat());
+                sql.append(" and A.lat > " + filter.getBottomRightLat());
+                sql.append(" and A.long < " + filter.getTopLeftLong());
+                sql.append(" and A.long > " + filter.getBottomRightLong());
+        }*/
+        
+        System.out.println(this.getClass() + " <DEBUG>" + sql.toString());
+        if(db.connect()){
+                 db.query(sql.toString());
+                 while(db.next()) {                              
+                         Iterator it = counts.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pairs = (Map.Entry)it.next();                         
+
+                                if(pairs.getKey().equals(Utils.getFormattedDateMonth(Utils.getDate(db.getString("date")))))
+                                        pairs.setValue(db.getInt("count"));                                                                     
+                            }
+                 }
+        }
+        
+        return counts;
+}
 	
 	public HashMap<String, Integer> getKeywordCount(Filter filter) {
 		HashMap<String, Integer> tweetCount = new HashMap<String, Integer>();
