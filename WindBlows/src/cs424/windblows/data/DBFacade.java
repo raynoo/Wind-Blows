@@ -73,13 +73,16 @@ public class DBFacade {
 	 * @return ArrayList<Tweet>
 	 */
 	public ArrayList<Tweet> getTweets(Filter filter){
+		ArrayList<Tweet> list = new ArrayList<Tweet>();
+		
+		
 		// convert the date to format 
 		StringBuffer sql = new StringBuffer();
 		sql.append("Select lat, long from Microblogs where ");
 		sql.append("date == '");
 		sql.append(Utils.getFormattedDate(filter.getDate()));
 		sql.append("' ");
-		
+	
 		// add categories
 		if(filter.getCategories().size() > 0){
 			sql.append(" and categoryId in (");
@@ -94,7 +97,9 @@ public class DBFacade {
 			}
 			sql.append(")");
 		}
-		
+		else {
+			return list; // returns if no category was selected
+		}
 		if(filter.getTopLeftLat() != null) {
 			sql.append(" and lat < " + filter.getTopLeftLat());
 			sql.append(" and lat > " + filter.getBottomRightLat());
@@ -103,7 +108,6 @@ public class DBFacade {
 		}
 		
 		//System.out.println(this.getClass() + " <DEBUG>" + sql.toString());
-		ArrayList<Tweet> list = new ArrayList<Tweet>();
 		if(db.connect()){
 			 db.query(sql.toString());
 			 while(db.next()) {

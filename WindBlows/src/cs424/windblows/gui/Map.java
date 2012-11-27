@@ -352,4 +352,12 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 			return true;
 		else return false;
 	}
+	
+	@Override
+	public void dateChanged(Date date) {
+		this.currentDate = date;
+		System.out.println(date);
+		curFilter.setDate(date);
+		filterChanged = true;
+	}
 }

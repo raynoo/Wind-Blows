@@ -1,5 +1,26 @@
 package cs424.windblows.application;
 
+import static cs424.windblows.application.Constants.backX1;
+import static cs424.windblows.application.Constants.backX2;
+import static cs424.windblows.application.Constants.backY1;
+import static cs424.windblows.application.Constants.backY2;
+import static cs424.windblows.application.Constants.mapPanelHeight;
+import static cs424.windblows.application.Constants.mapPanelWidth;
+import static cs424.windblows.application.Constants.mapPanelX;
+import static cs424.windblows.application.Constants.mapPanelY;
+import static cs424.windblows.application.Constants.playButtonHeight;
+import static cs424.windblows.application.Constants.playButtonWidth;
+import static cs424.windblows.application.Constants.playButtonX;
+import static cs424.windblows.application.Constants.playButtonY;
+import static cs424.windblows.application.Constants.wcHeight;
+import static cs424.windblows.application.Constants.wcWidth;
+import static cs424.windblows.application.Constants.wcX;
+import static cs424.windblows.application.Constants.wcY;
+import static cs424.windblows.application.Constants.weatherGraphicHeight;
+import static cs424.windblows.application.Constants.weatherGraphicX;
+import static cs424.windblows.application.Constants.weatherGraphicY;
+import static cs424.windblows.application.Constants.weatherGraphiclWidth;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +34,7 @@ import cs424.windblows.gui.KeywordsSketch;
 import cs424.windblows.gui.Map;
 import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
+import cs424.windblows.gui.SliderSketch;
 import cs424.windblows.gui.WeatherGraphic;
 import cs424.windblows.gui.WordCloud;
 
@@ -40,7 +62,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 //	protected PlotterSketch plotter;
 	public Map map;
 	protected KeywordsSketch keywords;
-	
+	protected SliderSketch slider;
 	protected ArrayList<Sketch> sketches = new ArrayList<Sketch>();
 	
 	/***************************************************************/
@@ -78,7 +100,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		initPlaybackPanel();
 		initWeatherPanel();
 		initWordCloudPanel();
-		
+		initSlider();
 		omicronManager.setTouchListener(this);
 	}
 	
@@ -96,6 +118,18 @@ public class Main extends PApplet implements OmicronTouchListener {
 		// initialize dbfacade
 		DBFacade.setPApplet(this);
 	}
+	
+	void initSlider(){
+		// init the slider
+		Variable data = new Variable();
+		data.setParent(this);
+		data.setPlot(width/20, (height*11)/13, Constants.mapPanelWidth, (height*11)/12);
+		slider = new SliderSketch(data);
+		slider.setActive(true);
+		sketches.add(slider);
+		slider.addListener(map);
+	}
+	
 	
 	void initKeywordPanel() {
 		// init keywords sketch
@@ -251,6 +285,10 @@ public class Main extends PApplet implements OmicronTouchListener {
 		else if(map.isTouchValid(xPos, yPos))
 			return map;
 		
+		else if(slider.isTouchValid(xPos, yPos)){
+			System.err.println("slider called");
+			return slider;
+		}
 		return null;
 	}
 }
