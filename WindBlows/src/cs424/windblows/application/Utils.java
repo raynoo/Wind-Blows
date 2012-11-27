@@ -97,4 +97,37 @@ public class Utils {
 		SimpleDateFormat df = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH);
 		return df.format(date);
 	}
+	
+	/**
+	 * this is exact reverse of getDate
+	 * @param date
+	 * @return
+	 */
+	public static String getFormattedDateMonth(Date date){
+		SimpleDateFormat df = new SimpleDateFormat("M/d", Locale.ENGLISH);
+		return df.format(date);
+	}
+	
+	/**
+	 * Gets the serial number of the date starting from first
+	 * @param date
+	 * @return
+	 */
+	public static int getInt(Date min, Date max, Date date){
+		int count = 1;
+		for(Date d = min; !d.after(max); addDays(d, 1)){
+			if(d.compareTo(date) == 0) return count;
+		}
+		return count;
+	}
+	
+	public static Date getDate(Date min, Date max, int val){
+		int count = 1;
+		for(Date d = min; !d.after(max); d = addDays(d, 1), count++){
+			if(count == val) return d;
+		}
+		return min;
+	}
+	
+	
 }

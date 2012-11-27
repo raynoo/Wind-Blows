@@ -10,6 +10,10 @@ package cs424.windblows.application;
 public class Constants {
 	public static float SCALE = 1;
 	
+	public static String minDate = "4/30/2011";
+	public static String maxDate = "5/20/2011";
+	public static int numberOfDays = 30;
+	
 	//Given Lat-Long of map image
 	public static float topLeftLat = 42.3017f;
 	public static float topLeftLon = 93.5673f;
@@ -38,10 +42,10 @@ public class Constants {
 	public static int zoomButtonHeight = 15;
 	
 	//Play button 1
-	public static int playButtonX = 268;
+	public static int playButtonX = 268 * 3;
 	public static int playButtonY = 360;
-	public static int playButtonWidth = 20;
-	public static int playButtonHeight = 20;
+	public static int playButtonWidth = (int) Utils.scale(20);
+	public static int playButtonHeight = (int) Utils.scale(20);
 	
 	//Keyword Panel outline
 	public static int keywordPanelX = 680;
