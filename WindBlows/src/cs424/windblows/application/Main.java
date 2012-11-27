@@ -20,6 +20,10 @@ import static cs424.windblows.application.Constants.weatherGraphicHeight;
 import static cs424.windblows.application.Constants.weatherGraphicX;
 import static cs424.windblows.application.Constants.weatherGraphicY;
 import static cs424.windblows.application.Constants.weatherGraphiclWidth;
+import static cs424.windblows.application.Constants.graphHeight;
+import static cs424.windblows.application.Constants.graphWidth;
+import static cs424.windblows.application.Constants.graphX;
+import static cs424.windblows.application.Constants.graphY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,7 @@ import processing.core.PFont;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.gui.BackgroundSketch;
 import cs424.windblows.gui.KeywordsSketch;
+import cs424.windblows.gui.LineGraph;
 import cs424.windblows.gui.Map;
 import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
@@ -100,6 +105,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		initPlaybackPanel();
 		initWeatherPanel();
 		initWordCloudPanel();
+		initLineGraphPanel();
 		initSlider();
 		omicronManager.setTouchListener(this);
 	}
@@ -221,6 +227,17 @@ public class Main extends PApplet implements OmicronTouchListener {
 		back.setActive(true);
 		
 		addSketch(back);
+	}
+	
+	void initLineGraphPanel(){
+		Variable data = new Variable();
+		data.setPlot(graphX, graphY, graphX+graphWidth, graphY+graphHeight);
+		data.setParent(this);
+				
+		LineGraph graph = new LineGraph(data);
+		graph.setActive(true);
+		
+		addSketch(graph);
 	}
 	
 	void addSketch(Sketch sketch) {

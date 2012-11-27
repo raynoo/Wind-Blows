@@ -3,6 +3,7 @@
  */
 package cs424.windblows.application;
 
+
 /**
  * @author Gaurav
  *
@@ -71,4 +72,10 @@ public class Constants {
 	public static int backX2 = 1360;
 	public static int backY2 = 384;
 	//w:780 h:384
+	
+	//Line Graph Panel
+	public static int graphX = 990;
+	public static int graphY = 180;
+	public static int graphWidth = 350;
+	public static int graphHeight = 200;
 }
