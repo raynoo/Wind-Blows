@@ -309,6 +309,14 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 		
 		//on map
 		else {
+			
+			for(Marker m : markers) {
+				if(m.containsPoint(arg1, arg2)) {
+					m.touchDown(arg0, arg1, arg2, arg3, arg4);
+					return;
+				}
+			}
+			
 			if(currentDate.equals(max)) {
 				currentDate = min;
 				curFilter.setDate(min);
