@@ -1,10 +1,11 @@
 package cs424.windblows.gui;
 
+import omicronAPI.OmicronTouchListener;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Utils;
 import processing.core.PApplet;
 
-public class Marker {
+public class Marker implements OmicronTouchListener {
 	
 	Location location;
 	
@@ -41,6 +42,24 @@ public class Marker {
 			return true;
 		
 		return false;
+	}
+
+	@Override
+	public void touchDown(int arg0, float arg1, float arg2, float arg3,
+			float arg4) {
+		//display info
+		System.out.println("Marker.touchDown()");
+	}
+
+	@Override
+	public void touchMove(int arg0, float arg1, float arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void touchUp(int arg0, float arg1, float arg2, float arg3, float arg4) {
+		// TODO Auto-generated method stub
 	}
 	
 }
