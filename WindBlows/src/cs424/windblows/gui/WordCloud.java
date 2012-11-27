@@ -86,7 +86,6 @@ public class WordCloud extends Sketch implements FilterListener {
 			filterChanged = false;
 		}
 		
-		
 		parent.pushStyle();
 		parent.fill(EnumColor.GRAY_T.getValue());
 		parent.rect(wcX, wcY, wcWidth, wcHeight);

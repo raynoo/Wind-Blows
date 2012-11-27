@@ -4,9 +4,23 @@ import java.util.Date;
 
 public class Tweet {
 	protected int tweetID;
+	protected int userID;
 	protected Date dateTime;
 	protected String tweet;
 	protected double lat, lon;
+	
+	public Tweet() {
+		
+	}
+	
+	public Tweet(int id, int userid, String tweet, double lat, double lon) {
+		this.tweetID = id;
+		this.userID = userid;
+//		this.dateTime = dateTime;
+		this.tweet = tweet;
+		this.lat = lat;
+		this.lon = lon;
+	}
 	
 	public int getTweetID() {
 		return tweetID;
@@ -37,5 +51,11 @@ public class Tweet {
 	}
 	public void setLon(double lon) {
 		this.lon = lon;
+	}
+	public int getUserID() {
+		return userID;
+	}
+	public void setUserID(int id) {
+		this.userID = id;
 	}
 }

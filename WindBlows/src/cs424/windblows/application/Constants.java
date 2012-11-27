@@ -30,6 +30,12 @@ public class Constants {
 	public static int mapWidth = 640;
 	public static int mapHeight = 320;
 	
+	//Marker info on top of map
+	public static int infoX = 235;
+	public static int infoY = 20;
+	public static int infoWidth = 170;
+	public static int infoHeight = 60;
+	
 	//Map buttons
 	public static int zoomInButtonX = 602;
 	public static int zoomInButtonY = 267;

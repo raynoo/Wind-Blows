@@ -16,8 +16,9 @@ import cs424.windblows.application.Variable;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.data.Tweet;
 import cs424.windblows.listeners.FilterListener;
+import cs424.windblows.listeners.MarkerListener;
 
-public class Map extends Sketch implements OmicronTouchListener, FilterListener {
+public class Map extends Sketch implements OmicronTouchListener, FilterListener, MarkerListener {
 
 	PImage mapImage;
 	
@@ -39,6 +40,8 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	Date min = Utils.getDate("4/30/2011"), max = Utils.getDate("5/20/2011"), currentDate;
 	ArrayList<Tweet> tweetData;
 	ArrayList<Marker> markers;
+	Marker currentMarker;
+	boolean showMarkerInfo;
 	
 	boolean filterChanged = true;
 	
@@ -125,6 +128,9 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 		
 		for(Button b:mapButtons)
 			b.draw();
+		
+		if(showMarkerInfo)
+			currentMarker.displayInfo();
 	}
 	
 	public Location[] getBoundaryLatLong() {
@@ -190,13 +196,14 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 				float x = PApplet.map((float)t.getLon(), topLeftLon, bottomRightLon, currentImageTopLeftX, currentImageBottomRightX);
 				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
 
-				markers.add(new Marker(x, y, Utils.scale(10), this.parent));
+				markers.add(new Marker(x, y, Utils.scale(10), this.parent, t.getTweetID()));
 			}
 			filterChanged = false;
 		}
 		
 		for(Marker m : markers) {
 			m.setColor(EnumColor.RED_T.getValue());
+			m.setListener(this);
 			m.draw();
 		}
 //		System.out.println("Filtered data size: " + markers.size());
@@ -305,16 +312,17 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 				}
 			}
 			
-			if(currentDate.equals(max)) {
-				currentDate = min;
-				curFilter.setDate(min);
-			}
-			else {
-				currentDate = Utils.addDays(currentDate, 1);
-				curFilter.setDate(currentDate);
-			}
+//			if(currentDate.equals(max)) {
+//				currentDate = min;
+//				curFilter.setDate(min);
+//			}
+//			else {
+//				currentDate = Utils.addDays(currentDate, 1);
+//				curFilter.setDate(currentDate);
+//			}
 			filterChanged = true;
 			System.out.println(currentDate);
+			showMarkerInfo = false;
 		}
 	}
 	
@@ -347,5 +355,11 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 		System.out.println(date);
 		curFilter.setDate(date);
 		filterChanged = true;
+	}
+
+	@Override
+	public void markerSelected(Marker m) {
+		this.currentMarker = m;
+		this.showMarkerInfo = true;
 	}
 }

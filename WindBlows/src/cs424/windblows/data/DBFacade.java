@@ -3,6 +3,7 @@ package cs424.windblows.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import processing.core.PApplet;
@@ -79,7 +80,7 @@ public class DBFacade {
 		
 		// convert the date to format 
 		StringBuffer sql = new StringBuffer();
-		sql.append("Select lat, long from Microblogs where ");
+		sql.append("Select lat, long, tweet_id, person_id from Microblogs where ");
 		sql.append("date == '");
 		sql.append(Utils.getFormattedDate(filter.getDate()));
 		sql.append("' ");
@@ -115,6 +116,8 @@ public class DBFacade {
 				 Tweet t = new Tweet();
 				 t.setLat(db.getDouble("lat"));
 				 t.setLon(db.getDouble("long"));
+				 t.setTweetID(db.getInt("tweet_id"));
+				 t.setUserID(db.getInt("person_id"));
 				 list.add(t);
 			 }
 		}
@@ -181,5 +184,38 @@ public class DBFacade {
 			 }
 		}
 		return tweetCount;
+	}
+	
+	public List<Tweet> getTweetsByUser(int userID) {
+		ArrayList<Tweet> tweets = new ArrayList<Tweet>();
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("select tweet_id, date, time, lat, long, tweet, category from microblogs where person_id = " + userID);
+		
+		if(db.connect()) {
+			 db.query(sql.toString());
+			 
+			 while(db.next()) {
+				 tweets.add(new Tweet(db.getInt("tweet_id"), userID, db.getString("tweet"),
+						 db.getFloat("lat"), db.getFloat("long")));
+			 }
+		}
+		return tweets;
+	}
+	
+	public Tweet getTweetInfo(int tweetID) {
+		Tweet tweet = new Tweet();
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("select person_id, date, time, lat, long, tweet, category from microblogs where tweet_id = " + tweetID);
+		
+		if(db.connect()) {
+			 db.query(sql.toString());
+			 tweet.setUserID(db.getInt("person_id"));
+			 tweet.setLat(db.getFloat("lat"));
+			 tweet.setLon(db.getFloat("long"));
+			 tweet.setTweet(db.getString("tweet"));
+		}
+		return tweet;
 	}
 }
