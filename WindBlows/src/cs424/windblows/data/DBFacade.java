@@ -143,6 +143,48 @@ public class DBFacade {
 		return tweetMap;
 	}
 
+	
+	public HashMap<String, Integer> getKeywordCount(Filter filter) {
+        HashMap<String, Integer> tweetCount = new HashMap<String, Integer>();
+        
+        StringBuffer sql = new StringBuffer();
+        sql.append("select category, tweetcount from category");
+        
+//      if(filter.getDate() != null) {
+//              sql.append(" and m.date == '");
+//              sql.append(Utils.getFormattedDate(filter.getDate()));
+//              sql.append("' ");
+//      }
+        
+        // add categories
+        if(filter.getCategories().size() > 0) {
+                sql.append(" where categoryid in (");
+                boolean flag = false;
+                for(Integer cat : filter.getCategories()) {
+                        if(!flag) sql.append(cat);
+                        else {
+                                sql.append(", ");
+                                sql.append(cat);
+                        }
+                        flag = true;
+                }
+                sql.append(")");
+        }
+        
+        System.out.println(sql.toString());
+        
+        if(db.connect()) {
+                 db.query(sql.toString());
+                 
+                 while(db.next()) {
+                         String category = db.getString("category");    
+                         Integer count = db.getInt("tweetcount");                                
+                         tweetCount.put(category, count);
+                 }
+        }
+        return tweetCount;
+	}
+	
 	public HashMap<String,Integer> getCategoryCounts(Filter filter) {
 		// TODO Auto-generated method stub
 
@@ -160,7 +202,7 @@ public class DBFacade {
 		//		"TweetCategory B on A.tweet_id = B.tweet_id where ");
 		
 		sql.append("select A.date,count(A.tweet_id) as count from Microblogs A inner join " +
-				"TweetCategory B on A.tweet_id = B.tweet_id where keyword_id = 2 group by A.date ");
+				"TweetCategory B on A.tweet_id = B.tweet_id where keyword_id = 6 group by A.date ");
 		
 		// add categories
 		/*if(filter.getCategories().size() > 0){
@@ -202,4 +244,5 @@ public class DBFacade {
 		
 		return counts;
 	}	
+
 }

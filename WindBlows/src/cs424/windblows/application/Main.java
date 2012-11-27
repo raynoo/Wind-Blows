@@ -34,6 +34,7 @@ import processing.core.PApplet;
 import processing.core.PFont;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.gui.BackgroundSketch;
+import cs424.windblows.gui.DateInfo;
 import cs424.windblows.gui.KeywordsSketch;
 import cs424.windblows.gui.LineGraph;
 import cs424.windblows.gui.Map;
@@ -68,6 +69,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 	public Map map;
 	protected KeywordsSketch keywords;
 	protected SliderSketch slider;
+	protected WordCloud wordcloud;
 	protected ArrayList<Sketch> sketches = new ArrayList<Sketch>();
 	
 	/***************************************************************/
@@ -103,6 +105,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		initBackgroundPanel();//have to be called right after map to draw over the spilled-over map
 		initKeywordPanel();
 		initPlaybackPanel();
+		initDateInfoPanel();
 		initWeatherPanel();
 		initWordCloudPanel();
 		initLineGraphPanel();
@@ -142,10 +145,11 @@ public class Main extends PApplet implements OmicronTouchListener {
 		Variable data = new Variable();
 		data.setParent(this);
 		data.setPlot(Constants.keywordPanelX, Constants.keywordPanelY, 
-				(Constants.keywordPanelWidth * 3)/2, Constants.keywordPanelHeight);
+				Constants.keywordPanelWidth, Constants.keywordPanelHeight);
 		keywords = new KeywordsSketch(data);
 		keywords.setActive(true);
 		keywords.setListener(map);
+		
 		sketches.add(keywords);
 	}
 		
@@ -163,14 +167,27 @@ public class Main extends PApplet implements OmicronTouchListener {
 	
 	void initWordCloudPanel() {
 		Variable data = new Variable();
-		data.setPlot(wcX, wcY, wcX+wcWidth, wcY+wcHeight);
+		data.setPlot(wcPanelX, wcPanelY, wcPanelX+wcPanelWidth, wcPanelY+wcPanelHeight);
 		data.setParent(this);
 		data.setLabel("Cloud");
 		
-		WordCloud wc = new WordCloud(data);
-		wc.setActive(true);
+		wordcloud = new WordCloud(data);
+		wordcloud.setActive(true);
 		
-		addSketch(wc);
+		keywords.setListener(wordcloud);
+		
+		addSketch(wordcloud);
+	}
+	
+	void initDateInfoPanel() {
+		Variable data = new Variable();
+		data.setPlot(datePanelX, datePanelY, datePanelX+datePanelWidth, datePanelY+datePanelHeight);
+		data.setParent(this);
+		
+		DateInfo dateinfo = new DateInfo(data);
+		dateinfo.setActive(true);
+		
+		addSketch(dateinfo);
 	}
 	
 	void initWeatherPanel() {

@@ -49,7 +49,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 	}
 	
 	void initMap() {
-		this.mapImage = parent.loadImage("../WindBlows/images/Vastopolis_Map_greyscale.png");
+		this.mapImage = parent.loadImage("images/Vastopolis_Map_greyscale.png");
 		this.imageCenterX = scale(mapWidth)/2;
 		this.imageCenterY = scale(mapHeight)/2;
 		this.zoomWidth = scale(mapWidth);
@@ -118,10 +118,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 		parent.stroke(EnumColor.DARK_GRAY.getValue());
 		parent.fill(EnumColor.RED.getValue());
 		
-		//draw truck crash location
-//		updateBoundaries();
-//		drawPoint(42.22655f, 93.42752f);
-		
 		//plot points of present filters
 		drawDataPoints();
 		
@@ -129,14 +125,6 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener 
 		
 		for(Button b:mapButtons)
 			b.draw();
-
-		parent.pushStyle();
-		//draw over map at the bottom
-		parent.fill(EnumColor.DARK_GRAY.getValue());
-		parent.noStroke();
-		parent.rect(scale(mapPanelX), scale(mapHeight), scale(mapPanelWidth), scale(384-mapHeight));
-//		parent.rect(scale(mapWidth), scale(plotY1), scale(mapPanelWidth-mapWidth), scale(mapPanelHeight));
-		parent.popStyle();
 	}
 	
 	public Location[] getBoundaryLatLong() {

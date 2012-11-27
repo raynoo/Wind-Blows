@@ -1,19 +1,33 @@
 package cs424.windblows.gui;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
+import static cs424.windblows.application.Constants.wcX;
+import static cs424.windblows.application.Constants.wcY;
+import static cs424.windblows.application.Constants.wcWidth;
+import static cs424.windblows.application.Constants.wcHeight;
 import cs424.windblows.application.EnumColor;
+import cs424.windblows.application.Filter;
+import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
+import cs424.windblows.data.DBFacade;
+import cs424.windblows.listeners.FilterListener;
 
-public class WordCloud extends Sketch {
+public class WordCloud extends Sketch implements FilterListener {
 
 	private int minCount;
 	private int maxCount;
-//    private int activeYear;
+    private Date currentDate;
+    private Filter curFilter;
+    
+    private boolean filterChanged = true;
 
 	private PFont font;
 	private int fontColor;
@@ -22,50 +36,60 @@ public class WordCloud extends Sketch {
 	private float maxFontSize;
 
 	List<DataPoint> data;
+	HashMap<String, Integer> filterCounts;
 	
 	public WordCloud(Variable data) {
 		super(data);
 
-		this.minFontSize = scale(15);
-		this.maxFontSize = scale(50);
+		this.minFontSize = scale(10);
+		this.maxFontSize = scale(40);
 		this.font = parent.createFont("Helvetica", maxFontSize, true);
 		this.fontColor = EnumColor.DARK_RED.getValue();
-
-		getData();
 	}
 
 	void getData() {
+		
+		if(curFilter == null) {
+			curFilter = new Filter();
+			currentDate = Utils.getDate("4/30/2011");
+			curFilter.setDate(currentDate);
+		}
+		
 		data = new ArrayList<DataPoint>();
-
-		data.add(new DataPoint("Fever", 890));
-		data.add(new DataPoint("Chills", 550));
-		data.add(new DataPoint("Cold", 390));
-		data.add(new DataPoint("Feeling", 30));
-		data.add(new DataPoint("Smoke", 66));
-		data.add(new DataPoint("Disaster", 100));
-		data.add(new DataPoint("Nausea", 412));
-		data.add(new DataPoint("Pain", 178));
-		data.add(new DataPoint("Stomach", 225));
-		data.add(new DataPoint("Weather", 165));
-
-
+		
 		minCount = Integer.MAX_VALUE;
 		maxCount = Integer.MIN_VALUE;
-
-		for (DataPoint d:data) {
-			if (d.getCount() < minCount)
-				minCount = d.getCount();
-			if (d.getCount() > maxCount)
-				maxCount = d.getCount();
+		
+		filterCounts = DBFacade.getInstance().getKeywordCount(curFilter);
+		
+		for(Entry<String, Integer> counts : filterCounts.entrySet()) {
+			data.add(new DataPoint(counts.getKey()+"("+counts.getValue()+")", counts.getValue()));
+			
+			if(filterCounts.size() == 1) {
+				minCount = counts.getValue();
+				maxCount = counts.getValue();
+			} else {
+				if (counts.getValue() < minCount)
+					minCount = counts.getValue();
+				if (counts.getValue() > maxCount)
+					maxCount = counts.getValue();
+			}
 		}
+		
 	}
 
 	@Override
 	protected void draw() {
 
+		if(filterChanged) {
+			getData();
+			filterChanged = false;
+		}
+		
+		
 		parent.pushStyle();
 		parent.fill(EnumColor.GRAY_T.getValue());
-		parent.rect(plotX1, plotY1, plotWidth, plotHeight);
+		parent.rect(wcX, wcY, wcWidth, wcHeight);
 		
 		for(DataPoint d:data) {
 			float relativeSize = PApplet.map(d.getCount(), minCount,
@@ -90,30 +114,56 @@ public class WordCloud extends Sketch {
 		for(DataPoint d:data) {
 			parent.textFont(font, d.getTextSize());
 			parent.text(d.getValue(), d.getTextX(), d.getTextY());
-			
 		}
 		
 		parent.popStyle();
 	}
 
 	boolean setWordPosition(DataPoint d) {
-		
+		parent.textFont(font, d.getTextSize());
 		int w = (int) (parent.textWidth(d.getValue()));
+
+		float textX = (parent.random((float) (wcWidth - w)) + wcX);
+		float textY = (parent.random((float) (wcHeight - d.getTextSize())) + wcY);
+		boolean fits = true;
+
+		//check if the entire word fits in the panel
+		if(d.getTextX()+w > wcX+wcWidth || d.getTextY()+d.getTextSize() > wcY+wcHeight)
+			fits = false;
 		
-//		for (int tries = 50; tries > 0; tries--) {
-			d.setTextX(parent.random((float) (this.plotWidth - w)) + this.plotX1);
-			d.setTextY(parent.random((float) (this.plotHeight - d.getTextSize())) + this.plotY1);
-			boolean fits = true;
+		//if its not overlapping
+		else {
+			for (int i = 0; i < w && fits; i++)
+				for (int j = 0; j < textX && fits; j++)
+				    if (parent.get((int) (textX + i), (int) (textY + j)) == fontColor)
+				    	fits = false;
+		}
+
+		if (fits) {
+			d.setTextX(textX);
+			d.setTextY(textY);
 			
-			//check if the entire word fits in the panel
-			if(d.getTextX()+w > plotX1+plotWidth || 
-					d.getTextY()+d.getTextSize() > plotY1+plotHeight)
-				fits = false;
-			
-			if (fits)
-				return true;
-//		}
+			return true;
+		}
 		return false;
+	}
+
+	@Override
+	public void categoryAdded(int categoryId) {
+		curFilter.addCategory(categoryId);
+		filterChanged = true;
+	}
+
+	@Override
+	public void categoryRemoved(int categoryId) {
+		curFilter.removeCategory(categoryId);
+		filterChanged = true;
+	}
+
+	@Override
+	public void dateChanged(Date date) {
+		this.currentDate = date;
+		filterChanged = true;
 	}
 }
 
