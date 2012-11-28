@@ -186,7 +186,8 @@ class MarkerInfoPanel {
 	public void touchDown(int id, float x1, float y1, float x2, float y2) {
 		
 		if(this.addUser.containsPoint(x1, y1)) {
-			if(Map.getSavedPeople() != null) {
+//			if(Map.getSavedPeople() != null) {
+			if(NewMap.getSavedPeople() != null) {
 				parent.listener.markerUserSelected(parent);
 //				this.addUser.setPressed(true);
 			}
