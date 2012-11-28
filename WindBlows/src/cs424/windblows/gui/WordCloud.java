@@ -226,6 +226,12 @@ public class WordCloud extends Sketch implements FilterListener {
 		this.currentDate = date;
 		filterChanged = true;
 	}
+
+	@Override
+	public void conditionChanged(int condition) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 class DataPoint implements Comparable<DataPoint> {

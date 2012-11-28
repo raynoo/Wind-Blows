@@ -50,6 +50,11 @@ public class LineGraph extends Sketch  implements FilterListener{
 	
 	private void getData(){
 		
+		if(curFilter == null) {
+			curFilter = new Filter();
+			curFilter.setCondition(KeywordsSketch.OR);
+		}
+		
 		this.countValues = DBFacade.getInstance().getCategoryCounts(curFilter);
 		
 		List<Integer> count = new ArrayList<Integer>(countValues.values());		
@@ -198,13 +203,13 @@ public class LineGraph extends Sketch  implements FilterListener{
 
 	@Override
 	public void categoryAdded(int categoryId) {
-		// TODO Auto-generated method stub
+		curFilter.addCategory(categoryId);
 		getData();
 	}
 
 	@Override
 	public void categoryRemoved(int categoryId) {
-		// TODO Auto-generated method stub
+		curFilter.removeCategory(categoryId);
 		getData();
 	}
 
@@ -212,6 +217,12 @@ public class LineGraph extends Sketch  implements FilterListener{
 	public void dateChanged(Date date) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void conditionChanged(int condition) {
+		curFilter.setCondition(condition);
+		getData();		
 	}
 
 }
