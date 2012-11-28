@@ -21,9 +21,9 @@ import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.listeners.FilterListener;
-import cs424.windblows.application.ColorCodes;
+import cs424.windblows.listeners.TimeChanged;
 
-public class LineGraph extends Sketch  implements FilterListener{
+public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 
 	protected Filter curFilter;
 	//protected HashMap<Date,Integer> countValues;
@@ -398,6 +398,20 @@ public class LineGraph extends Sketch  implements FilterListener{
 				getData();
 			}			
 		}		
+	}
+
+	@Override
+	public void timeChanged(int id) {
+		curFilter.setTime(id);
+		yminValue = 0;
+		ymaxValue = 0;
+		countValues.clear();
+		categories.clear();
+		
+		for(Integer cat : curFilter.getCategories()){
+			categories.add(cat);
+			getData();
+		}
 	}
 
 }

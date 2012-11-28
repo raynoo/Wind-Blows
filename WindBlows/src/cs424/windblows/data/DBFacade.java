@@ -220,6 +220,15 @@ public class DBFacade {
          		
          		sql.append(" ) ");
          		
+         		if(filter.getTime() > 0 && filter.getTime() != KeywordsSketch.NONE) {
+        			if(filter.getTime() == KeywordsSketch.NIGHT){
+        				sql.append(" and time_id != 1");
+        			}
+        			else{
+        				sql.append(" and time_id == 1");
+        			}
+        		}
+         		
          		if(filter.getTopLeftLat() != null) {
              		sql.append(" and A.lat < " + filter.getTopLeftLat());
              		sql.append(" and A.lat > " + filter.getBottomRightLat());
@@ -257,6 +266,14 @@ public class DBFacade {
         		sql.append(" B.keyword_id = ");
         		sql.append(categoryId);
          		
+        		if(filter.getTime() > 0 && filter.getTime() != KeywordsSketch.NONE) {
+        			if(filter.getTime() == KeywordsSketch.NIGHT){
+        				sql.append(" and time_id != 1");
+        			}
+        			else{
+        				sql.append(" and time_id == 1");
+        			}
+        		}
          		if(filter.getTopLeftLat() != null) {
              		sql.append(" and A.lat < " + filter.getTopLeftLat());
              		sql.append(" and A.lat > " + filter.getBottomRightLat());
