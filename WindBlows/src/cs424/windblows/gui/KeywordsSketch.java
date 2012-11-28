@@ -32,16 +32,10 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	protected CheckBox and, or, day, night, none;
 	
 	protected ArrayList<FilterListener> listeners = new ArrayList<FilterListener>();
-	protected TimeChanged timeListener;
-	
-	
-	public TimeChanged getTimeListener() {
-		return timeListener;
-	}
+	protected ArrayList<TimeChanged> timeListeners;
 
-
-	public void setTimeListener(TimeChanged timeListener) {
-		this.timeListener = timeListener;
+	public void addTimeListener(TimeChanged timeListener) {
+		this.timeListeners.add(timeListener);
 	}
 
 
@@ -83,6 +77,8 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 		
 		initAndOr();
 		initDayNight();
+		
+		timeListeners = new ArrayList<TimeChanged>();
 	}
 	
 	
@@ -195,11 +191,13 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 					ColorCodes.setOR(false);
 			break;
 			
-		case DAY: 	timeListener.timeChanged(NONE);
+		case DAY: 	for(TimeChanged tc : this.timeListeners)
+						tc.timeChanged(NONE);
 					none.setSelected(true);
 		break;
 
-		case NIGHT:	timeListener.timeChanged(NONE);
+		case NIGHT:	for(TimeChanged tc : this.timeListeners)
+						tc.timeChanged(NONE);
 					none.setSelected(true);
 			break;
 
@@ -226,18 +224,21 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 					ColorCodes.setOR(true);
 			break;
 		
-		case DAY: 	timeListener.timeChanged(DAY);
+		case DAY: 	for(TimeChanged tc : this.timeListeners)
+			tc.timeChanged(DAY);
 					night.setSelected(false);
 					none.setSelected(false);
 					// listeners
 				break;
 				
-		case NIGHT: timeListener.timeChanged(NIGHT);
+		case NIGHT: for(TimeChanged tc : this.timeListeners)
+			tc.timeChanged(NIGHT);
 					day.setSelected(false);
 					none.setSelected(false);
 			break;
 	
-		case NONE:	timeListener.timeChanged(NONE);
+		case NONE:	for(TimeChanged tc : this.timeListeners)
+			tc.timeChanged(NONE);
 					night.setSelected(false);
 		day.setSelected(false);
 			break;
