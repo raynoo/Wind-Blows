@@ -21,8 +21,9 @@ import cs424.windblows.data.DBFacade;
 import cs424.windblows.data.Tweet;
 import cs424.windblows.listeners.FilterListener;
 import cs424.windblows.listeners.MarkerListener;
+import cs424.windblows.listeners.TimeChanged;
 
-public class Map extends Sketch implements OmicronTouchListener, FilterListener, MarkerListener {
+public class Map extends Sketch implements OmicronTouchListener, FilterListener, MarkerListener, TimeChanged {
 
 	PImage mapImage;
 	
@@ -418,6 +419,12 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 	
 	public void removeUser(int id) {
 		this.savedPeople.remove(new Integer(id));
+	}
+
+	@Override
+	public void timeChanged(int id) {
+		curFilter.setTime(id);
+		filterChanged = true;
 	}
 
 }

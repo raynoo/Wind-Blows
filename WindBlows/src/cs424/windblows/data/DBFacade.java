@@ -119,6 +119,14 @@ public class DBFacade {
 			return list; // returns if no category was selected
 		}
 		
+		if(filter.getTime() > 0 && filter.getTime() != KeywordsSketch.NONE) {
+			if(filter.getTime() == KeywordsSketch.NIGHT){
+				sql.append(" and time_id != 1");
+			}
+			else{
+				sql.append(" and time_id == 1");
+			}
+		}
 		
 		// if condition is and
 		if(filter.getCondition() == KeywordsSketch.AND){
@@ -356,5 +364,25 @@ public class DBFacade {
 			 tweet.setTweet(db.getString("tweet"));
 		}
 		return tweet;
+	}
+	
+	
+	public HashMap<Date, Weather> getWeatherData(){
+		HashMap<Date, Weather> data = new HashMap<Date, Weather>();
+		
+		String sql = "select * from Weather";
+		if(db.connect()){
+			db.query(sql);
+			while(db.next()) {
+				Weather w = new Weather();
+				w.setDate(Utils.getDate(db.getString("Date")));
+				w.setWindSpeed(db.getInt("Average_Wind_Speed"));
+				w.setWindDirection(db.getString("Wind_Direction"));
+				w.setWeather(db.getString("Weather"));
+				data.put(w.getDate(), w);
+			}
+		}
+		
+		return data;
 	}
 }
