@@ -181,10 +181,10 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 	
 	public String getImageType(){
 		switch (curImage){
-		case 0: return "Image Type : Greyscaled";
-		case 1: return "Image Type : Population Density";
-		case 2: return "Image Type : Population Density during day";
-		default: return "Image Type : Greyscaled";
+		case 0: return "Map Type : Greyscaled";
+		case 1: return "Map Type : Population Density";
+		case 2: return "Map Type : Population Density during day";
+		default: return "Map Type : Greyscaled";
 		}
 	}
 	
