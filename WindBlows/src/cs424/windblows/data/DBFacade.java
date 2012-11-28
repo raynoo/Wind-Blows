@@ -191,7 +191,7 @@ public class DBFacade {
                 sql.append(" and A.long > " + filter.getBottomRightLong());
         }*/
         
-        System.out.println(this.getClass() + " <DEBUG>" + sql.toString());
+        //System.out.println(this.getClass() + " <DEBUG>" + sql.toString());
         if(db.connect()){
                  db.query(sql.toString());
                  while(db.next()) {                              
