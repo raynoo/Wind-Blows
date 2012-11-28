@@ -153,7 +153,7 @@ public class SliderSketch extends Sketch implements OmicronTouchListener {
 	public void touchDown(int ID, float mX, float mY, float xWidth, float yWidth){
 		if(play.isFocus(mX, mY)){
 			playFlag = true;
-			if(curr == 21) curr = 1;
+			if(curr >= 21) curr = 1;
 		}
 		else if(pause.isFocus(mX, mY)){
 			playFlag = false;
