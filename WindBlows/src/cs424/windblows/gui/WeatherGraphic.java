@@ -68,11 +68,11 @@ public class WeatherGraphic extends Sketch implements FilterListener{
 		showers = parent.loadShape(Utils.getProjectPath() + File.separator + "images/showers.svg");
 		rain = parent.loadShape(Utils.getProjectPath() + File.separator + "images/rain.svg");
 		
-		E = parent.loadShape(Utils.getProjectPath() + File.separator + "images/east.svg");
-		N = parent.loadShape(Utils.getProjectPath() + File.separator + "images/north.svg");
-		W = parent.loadShape(Utils.getProjectPath() + File.separator + "images/west.svg");
-		NW = parent.loadShape(Utils.getProjectPath() + File.separator + "images/northwest.svg");
-		SE = parent.loadShape(Utils.getProjectPath() + File.separator + "images/southeast.svg");
+		E = parent.loadShape(Utils.getProjectPath() + File.separator + "images/west.svg");
+		N = parent.loadShape(Utils.getProjectPath() + File.separator + "images/south.svg");
+		W = parent.loadShape(Utils.getProjectPath() + File.separator + "images/east.svg");
+		NW = parent.loadShape(Utils.getProjectPath() + File.separator + "images/southeast.svg");
+		SE = parent.loadShape(Utils.getProjectPath() + File.separator + "images/northwest.svg");
 	}
 
 	@Override
