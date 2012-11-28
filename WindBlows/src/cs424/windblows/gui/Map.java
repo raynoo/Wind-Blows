@@ -26,7 +26,8 @@ import cs424.windblows.listeners.TimeChanged;
 public class Map extends Sketch implements OmicronTouchListener, FilterListener, MarkerListener, TimeChanged {
 
 	PImage mapImage;
-	
+	protected ArrayList<PImage> imageList;
+	protected int curImage = 0;
 	//all required coordinates and step values
 	float translateY = scale(10), translateX = scale(30);
 	
@@ -39,6 +40,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 	//Buttons
 	ArrayList<Button> mapButtons = new ArrayList<Button>();
 	Button zoomIn, zoomOut, panLeft, panUp, panRight, panDown;
+	Button toggleMap;
 	
 	//Data
 	Filter curFilter;
@@ -58,10 +60,15 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 		super(data);
 		initMap();
 		initButtons();
+		
+		imageList = new ArrayList<PImage>();
+		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_greyscale.png"));
+		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_PopulationDensity.png"));
+		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_DayTimePopulation.png"));
+		mapImage = imageList.get(curImage);
 	}
 	
 	void initMap() {
-		this.mapImage = parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_greyscale.png");
 		this.imageCenterX = scale(mapWidth)/2;
 		this.imageCenterY = scale(mapHeight)/2;
 		this.zoomWidth = scale(mapWidth);
@@ -107,13 +114,29 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 				scale(panRightButtonY+zoomButtonHeight));
 		panRight = new Button(data, ">");
 		
+		data.setPlot(scale(zoomInButtonX - zoomButtonWidth * 2), scale(zoomInButtonY-(zoomButtonHeight*2) - 6), 
+				scale(zoomInButtonX+zoomButtonWidth * 2), 
+				scale(zoomInButtonY- zoomButtonHeight - 6));
+		toggleMap = new Button(data, "Map type");
+		
+		
 		mapButtons.add(zoomIn);
 		mapButtons.add(zoomOut);
 		mapButtons.add(panLeft);
 		mapButtons.add(panUp);
 		mapButtons.add(panRight);
 		mapButtons.add(panDown);
+		mapButtons.add(toggleMap);
 		
+	}
+	
+	
+	public void toggleImage(){
+		if((curImage + 1) == imageList.size())
+			curImage = 0;
+		else curImage++;
+		
+		mapImage = imageList.get(curImage);
 	}
 	
 	@Override
@@ -144,6 +167,24 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 
 			if(previousMarker != null)
 				previousMarker.selected = false;
+		}
+		
+		
+		parent.rectMode(PApplet.CORNER);
+		parent.fill(200,200,200,200);
+		parent.noStroke();
+		parent.rect(scale(plotX1), scale(plotY1), scale(plotWidth), scale(25));
+		parent.fill(0);
+		parent.text(getImageType(), scale(plotX1 + 20), scale(plotY1 + 15));
+	}
+	
+	
+	public String getImageType(){
+		switch (curImage){
+		case 0: return "Image Type : Greyscaled";
+		case 1: return "Image Type : Population Density";
+		case 2: return "Image Type : Population Density during day";
+		default: return "Image Type : Greyscaled";
 		}
 	}
 	
@@ -317,7 +358,8 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 			panLeft();
 		else if(panRight.containsPoint(arg1, arg2))
 			panRight();
-		
+		else if(toggleMap.containsPoint(arg1, arg2))
+			toggleImage();
 		//on map
 		else {
 			

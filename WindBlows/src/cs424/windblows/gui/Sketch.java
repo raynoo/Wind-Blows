@@ -34,7 +34,7 @@ public class Sketch{
 	 * This method is called in the constructor to initialize the instance.
 	 */
 	public void init(Variable data){
-		this.parent = data.getParent();
+		parent = data.getParent();
 		this.plotX1 = data.getPlotX1();
 		this.plotY1 = data.getPlotY1();
 		this.plotX2 = data.getPlotX2();
