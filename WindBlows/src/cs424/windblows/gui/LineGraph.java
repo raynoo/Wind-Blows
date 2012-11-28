@@ -9,6 +9,8 @@ import java.util.List;
 
 import omicronAPI.OmicronTouchListener;
 import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PFont;
 import cs424.windblows.application.Constants;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Filter;
@@ -25,7 +27,11 @@ public class LineGraph extends Sketch  implements FilterListener{
 	protected String xlabel;
 	protected int xminValue, xmaxValue, yminValue, ymaxValue; 
 	protected int yintervals = 4; //default
-	protected float marginX, marginY;	  
+	protected float marginX, marginY;	 
+	protected int font_color;
+	protected int line_color;
+	protected PFont font;
+	protected float fontSize;
 	
 	public LineGraph(Variable data) {
 		// TODO Auto-generated constructor stub		
@@ -34,6 +40,10 @@ public class LineGraph extends Sketch  implements FilterListener{
 		marginX = (float) (0.2 * plotWidth);
 		marginY = (float) (0.25 * plotHeight);
 		xlabel = "Tweets Vs Time";
+		font_color = EnumColor.DARK_RED.getValue();
+		line_color = EnumColor.WHITE.getValue();
+		fontSize = scale(12);
+		font = parent.createFont("Helvetica", fontSize, true);
 		
 		getData();
 	}
@@ -62,21 +72,25 @@ public class LineGraph extends Sketch  implements FilterListener{
 		graphWidth = plotWidth - marginX;
 		graphHeight = plotHeight - marginY;
 		
-		//plotting
-		parent.noFill();
-		parent.beginShape();	    
-		parent.vertex(graphX, graphY);
-		
 		int difference = ymaxValue - yminValue;	    
 	    int intervals = (int) Math.floor(difference/yintervals);
 	    
 	    if(intervals == 0)
-	      intervals = 1;	      
-	    //float finalXVal = graphX;
+	      intervals = 1;	
 	    
 	    List<Integer> count = new ArrayList<Integer>(countValues.values());		
-	    
-	    for (int val = xminValue, index = 0; val < xmaxValue; val++, index++) {
+		
+		parent.pushStyle();
+		//plotting
+		parent.fill(font_color);
+		parent.stroke(font_color);
+		parent.strokeWeight(scale(2));
+		parent.beginShape();		
+		parent.vertex(graphX, graphY);
+		
+		float finalXVal = graphX;
+		
+	    for (int val = xminValue, index = 0; val <= xmaxValue; val++, index++) {
 	        Float value = (float)count.get(index);
 
 	        Float xVal = (graphWidth * index)/(xmaxValue-xminValue); 
@@ -84,14 +98,14 @@ public class LineGraph extends Sketch  implements FilterListener{
        
 	        parent.vertex(graphX + xVal, graphY - yVal); 
 	        parent.point(graphX + xVal, graphY - yVal);
-	        //finalXVal = xVal; 
+	        finalXVal = xVal; 
 	    }
 	       
-	    //parent.vertex(graphX + finalXVal,graphY + plotHeight);	    
-	    parent.endShape();
+	    parent.vertex(graphX + finalXVal,graphY);	
+	    parent.vertex(graphX,graphY);
+	    parent.endShape();	    
 	    parent.smooth();
-	    parent.fill(0);	    
-	    
+		
 	    //y axis markings
 	    DecimalFormat formatter = new DecimalFormat("##,##,###");
 
@@ -102,14 +116,17 @@ public class LineGraph extends Sketch  implements FilterListener{
 	        
 	      if(index % intervals == 0){
 	          if(value == yminValue){
-	        	  parent.textAlign( parent.RIGHT, parent.BOTTOM);
+	        	  parent.textAlign( PConstants.RIGHT, PConstants.BOTTOM);
 	          }
-	          else if(value == xminValue){
-	        	  parent.textAlign( parent.RIGHT, parent.TOP);
+	          else if(value >= ymaxValue){
+	        	  parent.textAlign( PConstants.RIGHT, PConstants.TOP);
 	          }
 	          else
-	        	  parent.textAlign( parent.RIGHT,  parent.CENTER);
+	        	  parent.textAlign( PConstants.RIGHT,  PConstants.CENTER);
 	           
+	          parent.stroke(line_color);
+	          parent.fill(line_color);
+	          
 	          parent.text(formatter.format(value).toString(),(float) (graphX - 0.2*marginX), graphY - (index * graphHeight/difference));    
 	          parent.line(graphX,graphY - (index * graphHeight/difference),(float) (graphX - 0.1*marginX),graphY - (index * graphHeight/difference));
 	        }
@@ -132,21 +149,23 @@ public class LineGraph extends Sketch  implements FilterListener{
 	     
 	     if (intervals == 0)
 	       intervals = 1;
-	     
-	     //for (Integer value = xminValue, index = 0; value < xmaxValue; value++, index++) {
+	     	     
 	     for(Date d = minDate; !d.after(maxDate); d = Utils.addDays(d, 1), index++,i++){
 	    	 
 	    	 if(index % intervals == 0){
 	          
 	    		 if(d == maxDate){
-	    			 parent.textAlign(parent.RIGHT, parent.TOP);
+	    			 parent.textAlign(PConstants.RIGHT, PConstants.TOP);
 	    		 }
 	    		 else if(d == minDate){
-	    			 parent.textAlign(parent.LEFT,parent.TOP);
+	    			 parent.textAlign(PConstants.LEFT,PConstants.TOP);
 	    		 }
 	    		 else          
-	    			 parent.textAlign(parent.CENTER, parent.TOP);
+	    			 parent.textAlign(PConstants.CENTER, PConstants.TOP);
 	            
+		         parent.stroke(line_color);
+		         parent.fill(line_color);
+	    		 
 	    		 if(index%4 == 0){
 	    			 parent.text(Utils.getFormattedDateMonth(d),graphX + (index * graphWidth/(xmaxValue-xminValue)),(float) (graphY + 0.2*marginY));
 	    			 parent.line(graphX + (index * graphWidth/(xmaxValue-xminValue)),graphY,graphX + (index * graphWidth/(xmaxValue-xminValue)),(float) (graphY + 0.18*marginY));    
@@ -157,10 +176,12 @@ public class LineGraph extends Sketch  implements FilterListener{
 	     }
 		
 		//x and y axis
+	    parent.stroke(line_color);
 		parent.line(graphX, graphY, graphX, graphY - graphHeight);
 		parent.line(graphX, graphY, graphX + graphWidth, graphY);
 		parent.text(xlabel,graphX + (float)(0.35*plotWidth), (float) (graphY + 0.7 * marginY));
-	
+		
+		parent.popStyle();
 	}
 	
 	@Override
