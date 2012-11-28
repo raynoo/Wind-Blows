@@ -4,7 +4,14 @@ import java.util.Date;
 
 public class Tweet {
 	protected int tweetID;
-	protected int userID;
+	protected int userID, categoryId;
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
 	protected Date dateTime;
 	protected String tweet;
 	protected double lat, lon;
