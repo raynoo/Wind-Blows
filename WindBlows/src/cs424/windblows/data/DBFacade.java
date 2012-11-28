@@ -64,7 +64,7 @@ public class DBFacade {
 	public HashMap<Integer, String> getKeywords(){
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
 		if(db.connect()){
-			 db.query("select categoryId, category from Microblogs group by category order by categoryId");
+			 db.query("select categoryId, category from Category order by categoryId");
 			 while(db.next()) {
 				 map.put(db.getInt("categoryId"), db.getString("category"));
 			 }
@@ -177,17 +177,17 @@ public class DBFacade {
 	 * Returns counts of tweets for selected criteira grouped by the date
 	 * @return HashMap<String,Integer>
 	 */
-	public HashMap<String,Integer> getCategoryCounts(Filter filter) {
+	public HashMap<Date,Integer> getCategoryCounts(Filter filter, int categoryId) {
         
 
         StringBuilder sql = new StringBuilder();
-        HashMap<String,Integer> counts = new HashMap<String,Integer>();
+        HashMap<Date,Integer> counts = new HashMap<Date,Integer>();
         Date minDate = Utils.getDate(Constants.minDate);
         Date maxDate = Utils.getDate(Constants.maxDate);                
         int i = 1;
         
         for(Date d = minDate; !d.after(maxDate); d = Utils.addDays(d, 1), i++){
-                counts.put(Utils.getFormattedDateMonth(d), 0);
+                counts.put(d, 0);
         }
         
         /*sql.append("select A.date,count(A.tweet_id) as count from Microblogs A inner join " +
@@ -234,7 +234,7 @@ public class DBFacade {
                     "TweetCategory B on A.tweet_id = B.tweet_id where ");
         	
         	if(filter.getCategories().size() > 0){
-         		sql.append(" B.keyword_id IN (");
+         		/*sql.append(" B.keyword_id IN (");
          		boolean flag = false;
          		for(Integer cat : filter.getCategories()){
          			if(!flag) sql.append(cat);
@@ -244,7 +244,10 @@ public class DBFacade {
          			}
          			flag = true;
          		}
-         		sql.append(" ) ");
+         		sql.append(" ) ");*/
+        		
+        		sql.append(" B.keyword_id = ");
+        		sql.append(categoryId);
          		
          		if(filter.getTopLeftLat() != null) {
              		sql.append(" and A.lat < " + filter.getTopLeftLat());
@@ -263,16 +266,19 @@ public class DBFacade {
      	System.out.println("<DEBUG>" + sql.toString());
      		
         if(db.connect()){
-                 db.query(sql.toString());
-                 while(db.next()) {                              
-                         Iterator it = counts.entrySet().iterator();
-                            while (it.hasNext()) {
-                                Map.Entry pairs = (Map.Entry)it.next();                         
+           db.query(sql.toString());
+           while(db.next()) {                              
+              	 Iterator it = counts.entrySet().iterator();
+                 while (it.hasNext()) {
+                  	 Map.Entry pairs = (Map.Entry)it.next();                         
 
-                                if(pairs.getKey().equals(Utils.getFormattedDateMonth(Utils.getDate(db.getString("date")))))
-                                        pairs.setValue(db.getInt("count"));                                                                     
-                            }
+                     //if(pairs.getKey().equals(Utils.getFormattedDateMonth(Utils.getDate(db.getString("date")))))
+                     if(pairs.getKey().equals(Utils.getDate(db.getString("date")))){
+                      	//System.out.println(pairs.getKey() + " " + Utils.getDate(db.getString("date")) + " " + db.getString("date"));
+                         pairs.setValue(db.getInt("count"));                    
+                      }
                  }
+           }
         }
         
         return counts;
