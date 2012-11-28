@@ -79,7 +79,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		initMap();
 		initBackgroundPanel();//have to be called right after map to draw over the spilled-over map
 		initKeywordPanel();
-		initPlaybackPanel();
+		
 		initDateInfoPanel();
 		initWeatherPanel();
 		initWordCloudPanel();
@@ -107,7 +107,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 		// init the slider
 		Variable data = new Variable();
 		data.setParent(this);
-		data.setPlot(width/20, (height*11)/13, Constants.mapPanelWidth, (height*11)/12);
+		//data.setPlot(width/20, (height*11)/13, Constants.mapPanelWidth, (height*11)/12);
+		data.setPlot(Utils.scale(20), Utils.scale(320), Utils.scale(640), Utils.scale(64));
 		slider = new SliderSketch(data);
 		slider.setActive(true);
 		sketches.add(slider);
@@ -120,7 +121,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		Variable data = new Variable();
 		data.setParent(this);
 		data.setPlot(Constants.keywordPanelX, Constants.keywordPanelY, 
-				Constants.keywordPanelWidth, Constants.keywordPanelHeight);
+				(Constants.keywordPanelWidth * 3)/2, Constants.keywordPanelHeight);
 		keywords = new KeywordsSketch(data);
 		keywords.setActive(true);
 		keywords.setListener(map);
@@ -174,40 +175,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		weather.setActive(true);
 		addSketch(weather);
 	}
-	
-	void initPlaybackPanel() {
-		//TODO: create a sketch for the entire panel
-		
-		Variable b1 = new Variable();
-		int x=playButtonX;
-		b1.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
-		b1.setParent(this);
-		
-		Variable b2 = new Variable();
-		x += playButtonWidth+5;
-		b2.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
-		b2.setParent(this);
-		
-		Variable b3 = new Variable();
-		x += playButtonWidth+5;
-		b3.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
-		b3.setParent(this);
-		
-		Variable b4 = new Variable();
-		x += playButtonWidth+5;
-		b4.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
-		b4.setParent(this);
-		
-		Variable b5 = new Variable();
-		x += playButtonWidth+5;
-		b5.setPlot(x, playButtonY, playButtonWidth+x, playButtonHeight+playButtonY);
-		b5.setParent(this);
-		
-		Playback playback = new Playback(b1, b2, b3, b4, b5);
-		playback.setActive(true);
 
-		addSketch(playback);
-	}
 	
 	//to redraw the background to draw over the zoomed in map
 	void initBackgroundPanel() {
@@ -295,7 +263,6 @@ public class Main extends PApplet implements OmicronTouchListener {
 			return map;
 		
 		else if(slider.isTouchValid(xPos, yPos)){
-			System.err.println("slider called");
 			return slider;
 		}
 		return null;

@@ -15,7 +15,16 @@ public class Filter {
 	protected ArrayList<Integer> categories;
 	protected Date date;
 	protected Float topLeftLat, topLeftLong, bottomRightLat, bottomRightLong;
+	protected int condition;
 	
+	public int getCondition() {
+		return condition;
+	}
+
+	public void setCondition(int condition) {
+		this.condition = condition;
+	}
+
 	public Date getDate() {
 		return date;
 	}

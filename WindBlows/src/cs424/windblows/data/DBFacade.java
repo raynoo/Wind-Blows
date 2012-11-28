@@ -13,6 +13,7 @@ import processing.core.PApplet;
 import cs424.windblows.application.Constants;
 import cs424.windblows.application.Filter;
 import cs424.windblows.application.Utils;
+import cs424.windblows.gui.KeywordsSketch;
 import de.bezier.data.sql.SQLite;
 
 
@@ -76,6 +77,15 @@ public class DBFacade {
 	 * TODO 1. modify this function so that it also takes in to account time.
 	 * 		2. also category id
 	 * 		3. identify the data which need to be fetched
+	 * 
+	 * 
+	 * 	AND - 	select lat, long from Microblogs inner join TweetCategory on TweetCategory.tweet_id = Microblogs.tweet_id 
+	 *			where keyword_id IN (21,12)
+	 *			group by TweetCategory.tweet_id
+     *			having COUNT(distinct TweetCategory.keyword_id)=2  
+     *
+     *	OR - 	select lat, long from Microblogs inner join TweetCategory on TweetCategory.tweet_id = Microblogs.tweet_id 
+	 *			where keyword_id IN (21,12)
 	 * @return ArrayList<Tweet>
 	 */
 	public ArrayList<Tweet> getTweets(Filter filter){
@@ -84,14 +94,16 @@ public class DBFacade {
 		
 		// convert the date to format 
 		StringBuffer sql = new StringBuffer();
-		sql.append("Select lat, long, tweet_id, person_id from Microblogs where ");
-		sql.append("date == '");
+		sql.append("select lat, long, Microblogs.tweet_id ");
+		sql.append(" from Microblogs inner join TweetCategory on TweetCategory.tweet_id = Microblogs.tweet_id ");
+		sql.append("where date == '");
 		sql.append(Utils.getFormattedDate(filter.getDate()));
 		sql.append("' ");
 	
 		// add categories
+		// if condition is OR
 		if(filter.getCategories().size() > 0){
-			sql.append(" and categoryId in (");
+			sql.append(" and keyword_id IN (");
 			boolean flag = false;
 			for(Integer cat : filter.getCategories()){
 				if(!flag) sql.append(cat);
@@ -106,6 +118,15 @@ public class DBFacade {
 		else {
 			return list; // returns if no category was selected
 		}
+		
+		
+		// if condition is and
+		if(filter.getCondition() == KeywordsSketch.AND){
+			sql.append(" group by TweetCategory.tweet_id ");
+			sql.append(" having COUNT(distinct TweetCategory.keyword_id)=");
+			sql.append(filter.getCategories().size());
+		}
+		
 		if(filter.getTopLeftLat() != null) {
 			sql.append(" and lat < " + filter.getTopLeftLat());
 			sql.append(" and lat > " + filter.getBottomRightLat());
@@ -113,7 +134,9 @@ public class DBFacade {
 			sql.append(" and long > " + filter.getBottomRightLong());
 		}
 		
-		//System.out.println(this.getClass() + " <DEBUG>" + sql.toString());
+		System.out.println("<DEBUG>" + sql.toString());
+		
+		
 		if(db.connect()){
 			 db.query(sql.toString());
 			 while(db.next()) {
