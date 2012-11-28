@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import omicronAPI.OmicronTouchListener;
+import cs424.windblows.application.ColorCodes;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
@@ -18,7 +19,7 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	protected ArrayList<CheckBox> checks;
 	protected ArrayList<CheckBox> condition;
 	
- 	protected float xBuff = Utils.scale(20);
+ 	protected float xBuff = Utils.scale(10);
 	protected float yBuff = Utils.scale(20);
 	
 	protected HashMap<Integer, String> keyMap;
@@ -57,14 +58,14 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 			count++;
 		}
 		dat.setLabel("AND");
-		dat.setPlot(plotX1 + xBuff, plotY1 + (yBuff * 11), 0, 0);
+		dat.setPlot(plotX1 + Utils.scale(100) + xBuff, plotY1 + (yBuff * 11), 0, 0);
 		and = new CheckBox(dat);
 		and.setActive(true);
 		and.setId(AND);
 		and.setListener(this);
 		
 		dat.setLabel("OR");
-		dat.setPlot(plotX1 + xBuff + Utils.scale(70), plotY1 + (yBuff * 11), 0, 0);
+		dat.setPlot(plotX1 + Utils.scale(100) + xBuff + Utils.scale(70), plotY1 + (yBuff * 11), 0, 0);
 		or = new CheckBox(dat);
 		or.setActive(true);
 		or.setId(OR);
@@ -80,10 +81,11 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	protected void draw() {
 		parent.pushStyle();
 		parent.fill(EnumColor.OFFWHITE.getValue());
-		//parent.rect(plotX1, plotY1, plotX2, plotY2, Utils.scale(10));
+		
+		parent.rect(plotX1, plotY1, Utils.scale(100) * 3, (float) (yBuff * 10.5), Utils.scale(10));
 		
 		parent.fill(EnumColor.OFFWHITE.getValue());
-		//parent.rect(plotX1, plotY2 + Utils.scale(20), plotX2, Utils.scale(40), Utils.scale(10));
+		parent.rect(plotX1 + Utils.scale(100), plotY1 + (float) (yBuff * 10.7),  Utils.scale(70) * 2, Utils.scale(25), Utils.scale(5));
 		
 		for(CheckBox box : checks){
 			box.draw();
@@ -124,12 +126,16 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	public void checkboxDisabled(int id) {
 		switch(id){
 		case AND: or.setSelected(true);
+					resetCheckboxes();
 					listenersConditionChanged(OR);
+					ColorCodes.setOR(true);
 			break;
 		case OR: and.setSelected(true);
 					listenersConditionChanged(AND);
+					ColorCodes.setOR(false);
 			break;
 		default: listenersCategoryRemoved(id);
+					ColorCodes.removeMapping(id);
 			break;
 		}
 	}
@@ -139,15 +145,28 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 		switch(id){
 		case AND: 	or.setSelected(false);
 					listenersConditionChanged(AND);
+					ColorCodes.setOR(false);
 			break;
 		case OR: 	and.setSelected(false);
+					resetCheckboxes();
 					listenersConditionChanged(OR);
+					ColorCodes.setOR(true);
 			break;
 		default: 	listenersCategoryAdded(id);
+					ColorCodes.genMappings(id);
 			break;
 		}
 	}
-
+	
+	public void resetCheckboxes(){
+		for(CheckBox cb : this.checks){
+			if(cb.isSelected){
+				cb.isSelected = false;
+				listenersCategoryRemoved(cb.id);
+			}
+			ColorCodes.reset();
+		}
+	}
 	public void listenersConditionChanged(int id){
 		for(FilterListener fl : listeners){
 			fl.conditionChanged(id);
@@ -169,5 +188,5 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	public void setListener(FilterListener listener) {
 		this.listeners.add(listener);
 	}
-	
+
 }

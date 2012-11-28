@@ -12,6 +12,7 @@ import omicronAPI.OmicronTouchListener;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import cs424.windblows.application.ColorCodes;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Filter;
 import cs424.windblows.application.Utils;
@@ -208,14 +209,14 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 				float x = PApplet.map((float)t.getLon(), topLeftLon, bottomRightLon, currentImageTopLeftX, currentImageBottomRightX);
 				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
 
-				markers.add(new Marker(x, y, 10, this.parent, t.getTweetID()));
-				markers.add(new Marker(x, y, Utils.scale(6), Sketch.parent, t.getTweetID()));
+				//markers.add(new Marker(x, y, Utils.scale(7), Sketch.parent, t.getTweetID(), t.getCategoryId()));
+				markers.add(new Marker(x, y, Utils.scale(4), Sketch.parent, t.getTweetID(), t.getCategoryId()));
 			}
 			filterChanged = false;
 		}
 		
 		for(Marker m : markers) {
-			m.setColor(EnumColor.RED_T.getValue());
+			m.setColor(ColorCodes.getColor(m.getCategoryID()));
 			m.setListener(this);
 			m.draw();
 		}
