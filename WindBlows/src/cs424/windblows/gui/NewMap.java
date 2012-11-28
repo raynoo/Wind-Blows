@@ -249,8 +249,8 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 //				float x = PApplet.map((float)t.getLon(), topLeftLon, bottomRightLon, currentImageTopLeftX, currentImageBottomRightX);
 //				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
 
-				float x = mercatorMap.getScreenX((float)t.getLat());
-				float y = mercatorMap.getScreenY((float)t.getLon());
+				float x = mercatorMap.getScreenX((float)t.getLon());
+				float y = mercatorMap.getScreenY((float)t.getLat());
 				
 				markers.add(new Marker(x, y, Utils.scale(4), Sketch.parent, t.getTweetID(), t.getCategoryId()));
 			}
