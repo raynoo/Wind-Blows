@@ -106,6 +106,9 @@ public class WordCloud extends Sketch implements FilterListener {
 	}
 	
 	void createCloud() {
+		Collections.sort(data);
+		data = data.subList(0, 10);
+		
 		for(DataPoint d:data) {
 			float relativeSize = PApplet.map(d.getCount(), minCount, maxCount, minFontSize, maxFontSize);
 			d.setTextSize((int)relativeSize);
@@ -123,7 +126,7 @@ public class WordCloud extends Sketch implements FilterListener {
 				}
 			}
 		}
-		Collections.sort(data);
+		
 //		recomputePositions();
 	}
 	
@@ -245,9 +248,9 @@ class DataPoint implements Comparable<DataPoint> {
 	
 	@Override
 	public int compareTo(DataPoint dp) {
-		if(this.count > dp.count)
+		if(this.count < dp.count)
 			return 1;
-		else if(this.count < dp.count)
+		else if(this.count > dp.count)
 			return -1;
 		return 0;
 	}
