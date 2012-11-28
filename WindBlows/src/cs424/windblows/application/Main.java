@@ -49,6 +49,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 	protected WordCloud wordcloud;
 	protected DateInfo dateinfo;
 	protected WeatherGraphic weather;
+	protected LineGraph graph;
 	protected ArrayList<Sketch> sketches = new ArrayList<Sketch>();
 	
 	/***************************************************************/
@@ -82,14 +83,17 @@ public class Main extends PApplet implements OmicronTouchListener {
 		
 		initMap();
 		initBackgroundPanel();//have to be called right after map to draw over the spilled-over map
-		initKeywordPanel();
 		
 		initDateInfoPanel();
 		initWeatherPanel();
-		initWordCloudPanel();
+		initKeywordPanel();
 		initLineGraphPanel();
 		initSlider();
+		initWordCloudPanel();
 		omicronManager.setTouchListener(this);
+		
+		keywords.addTimeListener(nmap);
+		keywords.addTimeListener(graph);
 	}
 	
 	/**
@@ -134,7 +138,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 //		keywords.setListener(map);
 //		keywords.setTimeListener(map);
 		keywords.setListener(nmap);
-		keywords.setTimeListener(nmap);
+		
 		sketches.add(keywords);
 	}
 		
@@ -208,7 +212,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		data.setPlot(graphX, graphY, graphX+graphWidth, graphY+graphHeight);
 		data.setParent(this);
 				
-		LineGraph graph = new LineGraph(data);
+		graph = new LineGraph(data);
 		graph.setActive(true);
 		
 		keywords.setListener(graph);
