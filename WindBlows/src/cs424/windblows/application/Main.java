@@ -197,6 +197,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 		LineGraph graph = new LineGraph(data);
 		graph.setActive(true);
 		
+		keywords.setListener(graph);
+		
 		addSketch(graph);
 	}
 	

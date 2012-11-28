@@ -190,45 +190,76 @@ public class DBFacade {
                 counts.put(Utils.getFormattedDateMonth(d), 0);
         }
         
-        sql.append("select A.date,count(A.tweet_id) as count from Microblogs A inner join " +
-                      "TweetCategory B on A.tweet_id = B.tweet_id where ");
-        
         /*sql.append("select A.date,count(A.tweet_id) as count from Microblogs A inner join " +
-                        "TweetCategory B on A.tweet_id = B.tweet_id where keyword_id = 6 group by A.date ");*/
+        "TweetCategory B on A.tweet_id = B.tweet_id where keyword_id = 6 group by A.date ");*/
+              
+        if(filter.getCondition() == KeywordsSketch.AND){
+        	sql.append("select date,count(tweet_id) as count from " +
+        			"(select B.tweet_id,A.date from Microblogs A inner join TweetCategory B " +
+        			"on A.tweet_id = B.tweet_id where ");
+        	
+        	if(filter.getCategories().size() > 0){
+         		sql.append(" B.keyword_id IN (");
+         		boolean flag = false;
+         		for(Integer cat : filter.getCategories()){
+         			if(!flag) sql.append(cat);
+         			else{
+         				sql.append(", ");
+         				sql.append(cat);
+         			}
+         			flag = true;
+         		}
+         		
+         		sql.append(" ) ");
+         		
+         		if(filter.getTopLeftLat() != null) {
+             		sql.append(" and A.lat < " + filter.getTopLeftLat());
+             		sql.append(" and A.lat > " + filter.getBottomRightLat());
+             		sql.append(" and A.long < " + filter.getTopLeftLong());
+             		sql.append(" and A.long > " + filter.getBottomRightLong());
+             	}
+         		
+         		sql.append(" group by  A.tweet_id having COUNT(distinct B.keyword_id)= ");
+         		
+         		sql.append(filter.getCategories().size());
+         		
+         		sql.append(" ) group by date ");
+         	}
+         	else {
+         		return counts; // returns if no category was selected
+         	}   
+        }
+        else{
+        	sql.append("select A.date,count(B.tweet_id) as count from Microblogs A inner join " +
+                    "TweetCategory B on A.tweet_id = B.tweet_id where ");
+        	
+        	if(filter.getCategories().size() > 0){
+         		sql.append(" B.keyword_id IN (");
+         		boolean flag = false;
+         		for(Integer cat : filter.getCategories()){
+         			if(!flag) sql.append(cat);
+         			else{
+         				sql.append(", ");
+         				sql.append(cat);
+         			}
+         			flag = true;
+         		}
+         		sql.append(" ) ");
+         		
+         		if(filter.getTopLeftLat() != null) {
+             		sql.append(" and A.lat < " + filter.getTopLeftLat());
+             		sql.append(" and A.lat > " + filter.getBottomRightLat());
+             		sql.append(" and A.long < " + filter.getTopLeftLong());
+             		sql.append(" and A.long > " + filter.getBottomRightLong());
+             	}
+         		
+         		sql.append(" group by A.date; ");
+         	}
+         	else {
+         		return counts; // returns if no category was selected
+         	}        	
+        }
         
-        // add categories
-     	// if condition is OR
-     	if(filter.getCategories().size() > 0){
-     		sql.append(" keyword_id IN (");
-     		boolean flag = false;
-     		for(Integer cat : filter.getCategories()){
-     			if(!flag) sql.append(cat);
-     			else{
-     				sql.append(", ");
-     				sql.append(cat);
-     			}
-     			flag = true;
-     		}
-     		sql.append(")");
-     	}
-     	else {
-     		return counts; // returns if no category was selected
-     	}
-     		
-     	// if condition is and
-     	if(filter.getCondition() == KeywordsSketch.AND){
-     		sql.append(" group by TweetCategory.tweet_id ");
-     		sql.append(" having COUNT(distinct TweetCategory.keyword_id)=");
-     		sql.append(filter.getCategories().size());
-     	}
-     		
-     	if(filter.getTopLeftLat() != null) {
-     		sql.append(" and lat < " + filter.getTopLeftLat());
-     		sql.append(" and lat > " + filter.getBottomRightLat());
-     		sql.append(" and long < " + filter.getTopLeftLong());
-     		sql.append(" and long > " + filter.getBottomRightLong());
-     	}
-     		
      	System.out.println("<DEBUG>" + sql.toString());
      		
         if(db.connect()){
