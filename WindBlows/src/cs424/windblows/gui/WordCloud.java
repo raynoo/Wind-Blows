@@ -1,6 +1,7 @@
 package cs424.windblows.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import static cs424.windblows.application.Constants.wcX;
 import static cs424.windblows.application.Constants.wcY;
 import static cs424.windblows.application.Constants.wcWidth;
 import static cs424.windblows.application.Constants.wcHeight;
+import cs424.windblows.application.Constants;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Filter;
 import cs424.windblows.application.Utils;
@@ -42,7 +44,7 @@ public class WordCloud extends Sketch implements FilterListener {
 		super(data);
 
 		this.minFontSize = scale(10);
-		this.maxFontSize = scale(40);
+		this.maxFontSize = scale(20);
 		this.font = parent.createFont("Helvetica", maxFontSize, true);
 		this.fontColor = EnumColor.DARK_RED.getValue();
 	}
@@ -85,40 +87,48 @@ public class WordCloud extends Sketch implements FilterListener {
 			getData();
 			filterChanged = false;
 		}
-		
 		parent.pushStyle();
+		
+		createCloud();
+
 		parent.fill(EnumColor.GRAY_T.getValue());
 		parent.rect(wcX, wcY, wcWidth, wcHeight);
 		
 		for(DataPoint d:data) {
-			float relativeSize = PApplet.map(d.getCount(), minCount,
-					maxCount, minFontSize, maxFontSize);
+//			parent.pushStyle();
+			parent.fill(fontColor);
+			parent.textSize(d.getTextSize());
+			parent.textAlign(PConstants.LEFT, PConstants.TOP);
+			parent.text(d.getValue(), d.getTextX(), d.getTextY());
+//			parent.popStyle();
+		}
+		parent.popStyle();
+	}
+	
+	void createCloud() {
+		for(DataPoint d:data) {
+			float relativeSize = PApplet.map(d.getCount(), minCount, maxCount, minFontSize, maxFontSize);
 			d.setTextSize((int)relativeSize);
 			
 			int tries = 0;
-			while (! d.isDrawn() && tries < 50) {
-				if(! d.isDrawn() )
-					d.setIsDrawn(setWordPosition(d));
+			while (! d.isFits() && tries < 50) {
+				if(! d.isFits() ) {
+					d.setIsFits(computeWordPosition(d));
+					
+				}
 			
-				if (! d.isDrawn() ) {
+				if (! d.isFits() ) {
 					tries++;
 					relativeSize = (float) (relativeSize * 0.95);
 				}
 			}
 		}
-		
-		parent.textAlign(PConstants.LEFT, PConstants.TOP);
-		parent.fill(fontColor);
-		
-		for(DataPoint d:data) {
-			parent.textFont(font, d.getTextSize());
-			parent.text(d.getValue(), d.getTextX(), d.getTextY());
-		}
-		
-		parent.popStyle();
+		Collections.sort(data);
+//		recomputePositions();
 	}
-
-	boolean setWordPosition(DataPoint d) {
+	
+	boolean computeWordPosition(DataPoint d) {
+//		parent.pushStyle();
 		parent.textFont(font, d.getTextSize());
 		int w = (int) (parent.textWidth(d.getValue()));
 
@@ -130,21 +140,73 @@ public class WordCloud extends Sketch implements FilterListener {
 		if(d.getTextX()+w > wcX+wcWidth || d.getTextY()+d.getTextSize() > wcY+wcHeight)
 			fits = false;
 		
-		//if its not overlapping
-		else {
-			for (int i = 0; i < w && fits; i++)
-				for (int j = 0; j < textX && fits; j++)
-				    if (parent.get((int) (textX + i), (int) (textY + j)) == fontColor)
-				    	fits = false;
-		}
-
+//		for (int i = 0; i < w && fits; i++)
+//			for (int j = 0; j < textY && fits; j++)
+//				if (parent.get((int) (textX + i), (int) (textY + j)) == fontColor)
+//					fits = false;
+		
 		if (fits) {
 			d.setTextX(textX);
 			d.setTextY(textY);
 			
 			return true;
 		}
+//		parent.popStyle();
 		return false;
+	}
+	
+	void recomputePositions() {
+		
+		
+		
+		boolean firstIter = true;
+		
+		for(DataPoint d:data) {
+			int tries = 0;
+			
+//			System.out.println("WordCloud.drawWords()");
+			
+			while (!firstIter && tries < 30) {
+				parent.pushStyle();
+				parent.textFont(font, d.getTextSize());
+				int w = (int) (parent.textWidth(d.getValue()));
+				parent.popStyle();
+				
+				boolean flag = true;
+				
+				for (int i = 0; i < w && flag; i++) {
+					for (int j = 0; j < d.getTextSize(); j++)
+
+						if (parent.get((int) (d.getTextX() + i), (int) (d.getTextY() + j)) == fontColor) {
+							flag = false;
+							d.setIsFits(false);
+//							System.out.println("WordCloud.drawWords(): FALSE fit!");
+							break;
+						}
+				}
+
+				if(!d.isFits()) {
+					d.setTextSize((float) (d.getTextSize() * 0.95));
+					d.setTextX(parent.random((float) (wcWidth - w)) + wcX);
+					d.setTextY(parent.random((float) (wcHeight - d.getTextSize())) + wcY);
+				}
+				else break;
+				tries++;
+			}
+			if(d.isFits()) {
+				parent.pushStyle();
+				parent.textAlign(PConstants.LEFT, PConstants.TOP);
+				parent.fill(fontColor);
+				parent.text(d.getValue(), d.getTextX(), d.getTextY());
+				parent.popStyle();
+			}
+			firstIter = false;
+		}
+		
+		//if all is fine, draw on actual cloud
+		for(DataPoint d:data) {
+			parent.text(d.getValue(), d.getTextX(), d.getTextY());
+		}
 	}
 
 	@Override
@@ -166,22 +228,36 @@ public class WordCloud extends Sketch implements FilterListener {
 	}
 }
 
-class DataPoint {
+class DataPoint implements Comparable<DataPoint> {
 	String value;
-	int count, textSize;
-	float textX, textY;
-	boolean isDrawn = false;
+	int count;
+	float textX, textY, textSize;
+	boolean isFits = false;
 
 	public DataPoint(String value, int count) {
 		this.value = value;
 		this.count = count;
 	}
 	
-	public int getTextSize() {
+	@Override
+	public int compareTo(DataPoint dp) {
+		if(this.count > dp.count)
+			return 1;
+		else if(this.count < dp.count)
+			return -1;
+		return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (this.count == ((DataPoint)obj).count);
+	}
+	
+	public float getTextSize() {
 		return textSize;
 	}
 
-	public void setTextSize(int textSize) {
+	public void setTextSize(float textSize) {
 		this.textSize = textSize;
 	}
 	
@@ -209,11 +285,12 @@ class DataPoint {
 		this.textY = textY;
 	}
 	
-	public boolean isDrawn() {
-		return isDrawn;
+	public boolean isFits() {
+		return isFits;
 	}
 
-	public void setIsDrawn(boolean drawn) {
-		this.isDrawn = drawn;
+	public void setIsFits(boolean fits) {
+		this.isFits = fits;
 	}
+
 }

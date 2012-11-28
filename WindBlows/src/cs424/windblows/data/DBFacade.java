@@ -1,5 +1,6 @@
 package cs424.windblows.data;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class DBFacade {
 	
 	
 	private DBFacade(){
-		db = new SQLite(parent, "data/db_windblows.sqlite");
+		db = new SQLite(parent, Utils.getProjectPath() + File.separator + "data/db_windblows.sqlite");
 	}
 	
 	/**

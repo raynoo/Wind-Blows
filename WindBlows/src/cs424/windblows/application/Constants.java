@@ -9,6 +9,8 @@ package cs424.windblows.application;
  *
  */
 public class Constants {
+//	public static String projDir = Utils.getProjectPath();
+	
 	public static float SCALE = 1;
 	
 	public static String minDate = "4/30/2011";

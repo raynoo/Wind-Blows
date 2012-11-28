@@ -1,5 +1,7 @@
 package cs424.windblows.gui;
 
+import java.io.File;
+
 import omicronAPI.OmicronTouchListener;
 import processing.core.PApplet;
 import processing.core.PShape;
@@ -31,7 +33,7 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 	public CheckBox(Variable data) {
 		super(data);
 		isSelected = false;
-		check = parent.loadShape("images/black_check.svg");
+		check = parent.loadShape(Utils.getProjectPath() + File.separator + "images/black_check.svg");
 	}
 	
 	@Override

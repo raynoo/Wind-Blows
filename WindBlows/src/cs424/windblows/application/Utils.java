@@ -1,5 +1,7 @@
 package cs424.windblows.application;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -129,5 +131,22 @@ public class Utils {
 		return min;
 	}
 	
-	
+	public static String getProjectPath() {
+		
+		String dir = "";
+		
+		try {
+			dir = new File(".").getCanonicalPath();
+			
+			if (dir.substring(dir.length() - 4, dir.length()).equalsIgnoreCase(File.separator +"lib")
+					|| dir.substring(dir.length() - 4, dir.length()).equalsIgnoreCase(File.separator +"bin")){
+				dir = dir.substring(0, dir.length() - 4);
+			}
+		} 
+		catch (IOException e) {
+			System.out.println("Utils.getProjectPath() " + e.getMessage());
+		}
+		
+		return dir;
+	}
 }

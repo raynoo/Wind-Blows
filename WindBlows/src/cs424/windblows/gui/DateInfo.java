@@ -16,12 +16,12 @@ public class DateInfo extends Sketch {
 	@Override
 	protected void draw() {
 		parent.pushStyle();
-		parent.fill(EnumColor.GRAY_T.getValue());
-		parent.rect(plotX1, plotY1, plotWidth, plotHeight);
+//		parent.fill(EnumColor.GRAY_T.getValue());
+//		parent.rect(plotX1, plotY1, plotWidth, plotHeight);
 		parent.fill(EnumColor.BLACK.getValue());
-		parent.textSize(scale(10));
-		parent.textAlign(PConstants.LEFT, PConstants.TOP);
-		parent.text("Selected Date", plotX1+10, plotY1+10);
+		parent.textSize(scale(20));
+		parent.textAlign(PConstants.CENTER, PConstants.TOP);
+		parent.text("04/30/2011", plotX1+plotWidth/2, plotY1+10);
 		parent.popStyle();
 	}
 

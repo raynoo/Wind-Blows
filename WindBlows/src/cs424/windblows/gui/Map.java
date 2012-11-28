@@ -2,6 +2,7 @@ package cs424.windblows.gui;
 
 import static cs424.windblows.application.Constants.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -52,7 +53,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 	}
 	
 	void initMap() {
-		this.mapImage = parent.loadImage("images/Vastopolis_Map_greyscale.png");
+		this.mapImage = parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_greyscale.png");
 		this.imageCenterX = scale(mapWidth)/2;
 		this.imageCenterY = scale(mapHeight)/2;
 		this.zoomWidth = scale(mapWidth);

@@ -1,30 +1,5 @@
 package cs424.windblows.application;
 
-import static cs424.windblows.application.Constants.backX1;
-import static cs424.windblows.application.Constants.backX2;
-import static cs424.windblows.application.Constants.backY1;
-import static cs424.windblows.application.Constants.backY2;
-import static cs424.windblows.application.Constants.mapPanelHeight;
-import static cs424.windblows.application.Constants.mapPanelWidth;
-import static cs424.windblows.application.Constants.mapPanelX;
-import static cs424.windblows.application.Constants.mapPanelY;
-import static cs424.windblows.application.Constants.playButtonHeight;
-import static cs424.windblows.application.Constants.playButtonWidth;
-import static cs424.windblows.application.Constants.playButtonX;
-import static cs424.windblows.application.Constants.playButtonY;
-import static cs424.windblows.application.Constants.wcHeight;
-import static cs424.windblows.application.Constants.wcWidth;
-import static cs424.windblows.application.Constants.wcX;
-import static cs424.windblows.application.Constants.wcY;
-import static cs424.windblows.application.Constants.weatherGraphicHeight;
-import static cs424.windblows.application.Constants.weatherGraphicX;
-import static cs424.windblows.application.Constants.weatherGraphicY;
-import static cs424.windblows.application.Constants.weatherGraphiclWidth;
-import static cs424.windblows.application.Constants.graphHeight;
-import static cs424.windblows.application.Constants.graphWidth;
-import static cs424.windblows.application.Constants.graphX;
-import static cs424.windblows.application.Constants.graphY;
-
 import java.util.ArrayList;
 import java.util.List;
 
