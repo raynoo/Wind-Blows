@@ -13,6 +13,7 @@ import cs424.windblows.gui.DateInfo;
 import cs424.windblows.gui.KeywordsSketch;
 import cs424.windblows.gui.LineGraph;
 import cs424.windblows.gui.Map;
+import cs424.windblows.gui.NewMap;
 import cs424.windblows.gui.Playback;
 import cs424.windblows.gui.Sketch;
 import cs424.windblows.gui.SliderSketch;
@@ -41,7 +42,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 	
 	/*************************SKETCHES******************************/
 //	protected PlotterSketch plotter;
-	public Map map;
+//	public Map map;
+	protected NewMap nmap;
 	protected KeywordsSketch keywords;
 	protected SliderSketch slider;
 	protected WordCloud wordcloud;
@@ -116,7 +118,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 		sketches.add(slider);
 		slider.addListener(dateinfo);
 		slider.addListener(weather);
-		slider.addListener(map);
+//		slider.addListener(map);
+		slider.addListener(nmap);
 	}
 	
 	
@@ -128,8 +131,10 @@ public class Main extends PApplet implements OmicronTouchListener {
 				(Constants.keywordPanelWidth * 3)/2, Constants.keywordPanelHeight);
 		keywords = new KeywordsSketch(data);
 		keywords.setActive(true);
-		keywords.setListener(map);
-		keywords.setTimeListener(map);
+//		keywords.setListener(map);
+//		keywords.setTimeListener(map);
+		keywords.setListener(nmap);
+		keywords.setTimeListener(nmap);
 		sketches.add(keywords);
 	}
 		
@@ -139,10 +144,15 @@ public class Main extends PApplet implements OmicronTouchListener {
 		mapData.setParent(this);
 		mapData.setLabel("Map");
 		
-		map = new Map(mapData);
-		map.setActive(true);
+//		map = new Map(mapData);
+//		map.setActive(true);
+//
+//		addSketch(map);
+		
+		nmap = new NewMap(mapData);
+		nmap.setActive(true);
 
-		addSketch(map);
+		addSketch(nmap);
 	}
 	
 	void initWordCloudPanel() {
@@ -265,8 +275,11 @@ public class Main extends PApplet implements OmicronTouchListener {
 			return keywords;
 		}
 		
-		else if(map.isTouchValid(xPos, yPos))
-			return map;
+//		else if(map.isTouchValid(xPos, yPos))
+//			return map;
+		
+		else if(nmap.isTouchValid(xPos, yPos))
+			return nmap;
 		
 		else if(slider.isTouchValid(xPos, yPos)){
 			return slider;
