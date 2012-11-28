@@ -11,6 +11,7 @@ import java.util.List;
 import omicronAPI.OmicronTouchListener;
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.core.PVector;
 import cs424.windblows.application.ColorCodes;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Filter;
@@ -51,7 +52,7 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 	Marker currentMarker, previousMarker;
 	boolean showMarkerInfo;
 
-	boolean filterChanged = true;
+	boolean filterChanged = true, isPan = false;
 
 	//list to save people
 	static ArrayList<Integer> savedPeople = new ArrayList<Integer>();
@@ -153,7 +154,9 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 		
 		parent.imageMode(PApplet.CENTER);
 		parent.image(mapImage, scale(imageCenterX), scale(imageCenterY), scale(zoomWidth), scale(zoomHeight));
-		mercatorMap = new MercatorMap(zoomWidth, zoomHeight, topLeftLat, bottomRightLat, topLeftLon, bottomRightLon);
+		
+		if(mercatorMap.mapScreenWidth != zoomWidth || mercatorMap.mapScreenHeight != zoomHeight)
+			mercatorMap = new MercatorMap(zoomWidth, zoomHeight, topLeftLat, bottomRightLat, topLeftLon, bottomRightLon);
 		
 		parent.stroke(EnumColor.DARK_GRAY.getValue());
 		parent.fill(EnumColor.RED.getValue());
@@ -200,9 +203,10 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 	void updateBoundaries() {
 		updateCenter();
 		
-		
 		currentImageTopLeftX = imageCenterX - zoomWidth/2; currentImageBottomRightX = imageCenterX + zoomWidth/2;
 		currentImageTopLeftY = imageCenterY - zoomHeight/2; currentImageBottomRightY = imageCenterY + zoomWidth/2;
+		
+//		mercatorMap = new MercatorMap(zoomWidth, zoomHeight, topLeftLat, bottomRightLat, topLeftLon, bottomRightLon);
 		
 //		float currentTopLeftLong = PApplet.map(currentImageTopLeftX, 0, zoomWidth, topLeftLon, bottomRightLon);
 //		float currentTopLeftLat = PApplet.map(currentImageTopLeftY, 0, zoomHeight, topLeftLat, bottomRightLat);
@@ -221,36 +225,45 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 	}
 	
 	//correct image position when zooming out of map center
-	void updateCenter() {
+	boolean updateCenter() {
+		
+		boolean centerCorrected = false;
+		
 		//if new left edge is to right of visible-area-left-edge, align image by left
-		if(imageCenterX - zoomWidth/2 > this.plotX1)
+		if(imageCenterX - zoomWidth/2 > this.plotX1) {
 			imageCenterX = zoomWidth/2;
-		
+			centerCorrected = true;
+		}
 		//if new right edge is to left of visible-area-right-edge, align image by right
-		else if(imageCenterX + zoomWidth/2 < mapWidth)
+		else if(imageCenterX + zoomWidth/2 < mapWidth) {
 			imageCenterX = scale(mapWidth) - zoomWidth/2;
-		
+			centerCorrected = true;
+		}
 		//if new top edge is below visible-area-top-edge, align image by top
-		if(imageCenterY - zoomHeight/2 > this.plotY1)
+		if(imageCenterY - zoomHeight/2 > this.plotY1) {
 			imageCenterY = zoomHeight/2;
-		
+			centerCorrected = true;
+		}
 		//if new bottom edge is above visible-area-bottom-edge, align image by bottom
-		else if(imageCenterY + zoomHeight/2 < mapHeight)
+		else if(imageCenterY + zoomHeight/2 < mapHeight) {
 			imageCenterY = scale(mapHeight) - zoomHeight/2;
+			centerCorrected = true;
+		}
+		return centerCorrected;
 	}
 	
 	public void drawDataPoints() {
 		// loop through the tweet's in the list
 		if(filterChanged) {
 			getData();
+		
 			markers = new ArrayList<Marker>();
 			
 			for(Tweet t : tweetData) {
-//				float x = PApplet.map((float)t.getLon(), topLeftLon, bottomRightLon, currentImageTopLeftX, currentImageBottomRightX);
-//				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
-
 				float x = mercatorMap.getScreenX((float)t.getLon());
 				float y = mercatorMap.getScreenY((float)t.getLat());
+				
+				PVector coord =  mercatorMap.getScreenLocation(new PVector((float)t.getLon(), (float)t.getLat()));
 				
 				markers.add(new Marker(x, y, Utils.scale(4), Sketch.parent, t.getTweetID(), t.getCategoryId()));
 			}
@@ -296,31 +309,64 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 	}
 
 	public void panUp() {
-		if(zoomLevel != 1)
+		if(zoomLevel != 1) {
 			imageCenterY += translateY;
+			
+			boolean centerCorrected = updateCenter();
+			
+			if(!centerCorrected)
+				for(Marker m : markers)
+					m.centerY += translateY;
 		
-		updateBoundaries();
+//		isPan = true;
+//		updateBoundaries();
+		}
 	}
 	
 	public void panDown() {
-		if(zoomLevel != 1)
+		if(zoomLevel != 1) {
 			imageCenterY -= translateY;
 		
-		updateBoundaries();
+		boolean centerCorrected = updateCenter();
+		
+		if(!centerCorrected)
+			for(Marker m : markers)
+				m.centerY -= translateY;
+		
+//		isPan = true;
+//		updateBoundaries();
+		}
 	}
 	
 	public void panLeft() {
-		if(zoomLevel != 1)
+		if(zoomLevel != 1) {
 			imageCenterX += translateX;
 		
-		updateBoundaries();
+		boolean centerCorrected = updateCenter();
+		
+		if(!centerCorrected)
+			for(Marker m : markers)
+				m.centerX += translateX;
+		
+//		isPan = true;
+//		updateBoundaries();
+		}
 	}
 	
 	public void panRight() {
-		if(zoomLevel != 1)
+		if(zoomLevel != 1) {
 			imageCenterX -= translateX;
 		
-		updateBoundaries();
+			boolean centerCorrected = updateCenter();
+			
+			if(!centerCorrected)
+				for(Marker m : markers)
+					m.centerX -= translateX;
+		
+//		isPan = true;
+//		updateBoundaries();
+		
+		}
 	}
 	
 	@Override
