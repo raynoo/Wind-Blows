@@ -48,6 +48,10 @@ public class Button extends Sketch {
 	public void setText(String text) {
 		this.text = text;
 	}
+	
+	public void setTextSize(int size) {
+		this.textSize = size;
+	}
 
 	public boolean containsPoint(float xPos, float yPos) {
 		if(xPos > plotX1 && xPos < plotX2 && yPos > plotY1 && yPos < plotY2)

@@ -44,7 +44,7 @@ public class WordCloud extends Sketch implements FilterListener {
 		super(data);
 
 		this.minFontSize = scale(10);
-		this.maxFontSize = scale(20);
+		this.maxFontSize = scale(25);
 		this.font = parent.createFont("Helvetica", maxFontSize, true);
 		this.fontColor = EnumColor.DARK_RED.getValue();
 	}
@@ -68,7 +68,7 @@ public class WordCloud extends Sketch implements FilterListener {
 			data.add(new DataPoint(counts.getKey()+"("+counts.getValue()+")", counts.getValue()));
 			
 			if(filterCounts.size() == 1) {
-				minCount = counts.getValue();
+				minCount = 0;
 				maxCount = counts.getValue();
 			} else {
 				if (counts.getValue() < minCount)
@@ -156,8 +156,6 @@ public class WordCloud extends Sketch implements FilterListener {
 	}
 	
 	void recomputePositions() {
-		
-		
 		
 		boolean firstIter = true;
 		

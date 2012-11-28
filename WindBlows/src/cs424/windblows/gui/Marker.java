@@ -7,6 +7,7 @@ import static cs424.windblows.application.Constants.infoWidth;
 import static cs424.windblows.application.Constants.infoHeight;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Utils;
+import cs424.windblows.application.Variable;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.data.Tweet;
 import cs424.windblows.listeners.MarkerListener;
@@ -16,13 +17,15 @@ public class Marker implements OmicronTouchListener {
 	
 	Location location;
 	int tweetID, userID;
-	Tweet tweetInfo;
+	Tweet tweetInfo; String infoText;
+	MarkerInfoPanel infoPanel;
 	
 	float centerX, centerY;
 	float radius;
 	int color;
 	
 	MarkerListener listener;
+	boolean selected = false;
 	
 	PApplet p;
 	
@@ -31,7 +34,7 @@ public class Marker implements OmicronTouchListener {
 	public Marker(float centerX, float centerY, float radius, PApplet papplet, int tweetid) {
 		this.centerX = centerX;
 		this.centerY = centerY;
-		this.radius = radius;
+		this.radius = Utils.scale(radius);
 		this.p = papplet;
 		this.tweetID = tweetid;
 	}
@@ -43,24 +46,21 @@ public class Marker implements OmicronTouchListener {
 	public void draw() {
 		p.pushStyle();
 		p.stroke(EnumColor.DARK_RED.getValue());
+		
 		p.strokeWeight(Utils.scale(1f));
+		if(selected)
+			p.strokeWeight(Utils.scale(3f));
+
 		p.fill(color);
 		p.ellipse(centerX, centerY, 2*radius, 2*radius);
 		p.popStyle();
 	}
 	
 	public void displayInfo() {
-		tweetInfo = getTweetData();
-		String info = "User ID: " + tweetInfo.getUserID() + "\nMessage: " + tweetInfo.getTweet();
-		
-		p.pushStyle();
-		p.fill(EnumColor.GRAY.getValue());
-		p.rect(infoX, infoY, infoWidth, infoHeight, Utils.scale(5));
-		p.fill(EnumColor.BLACK.getValue());
-		p.textSize(Utils.scale(8));
-		p.text(info, infoX+5, infoY+5, infoWidth-5, infoHeight-5);
-		
-		p.popStyle();
+		tweetInfo = getData();
+		infoText = "User ID: " + tweetInfo.getUserID() + "\nMessage: " + tweetInfo.getTweet();
+		infoPanel = new MarkerInfoPanel(this, p);
+		infoPanel.draw();
 	}
 	
 	public boolean containsPoint(float x, float y) {
@@ -70,7 +70,11 @@ public class Marker implements OmicronTouchListener {
 		return false;
 	}
 	
-	public Tweet getTweetData() {
+	public String getInfoText() {
+		return infoText;
+	}
+	
+	public Tweet getData() {
 		return DBFacade.getInstance().getTweetInfo(tweetID);
 	}
 
@@ -80,6 +84,7 @@ public class Marker implements OmicronTouchListener {
 		//display info
 		System.out.println("Marker.touchDown()");
 		this.listener.markerSelected(this);
+//		this.selected = true;
 	}
 
 	@Override
@@ -106,11 +111,11 @@ public class Marker implements OmicronTouchListener {
 	}
 	
 	public void setUserID(int id) {
-		this.userID = id;
+		this.tweetInfo.setUserID(id);
 	}
 	
 	public int getUserID() {
-		return userID;
+		return this.getTweetInfo().getUserID();
 	}
 	
 	public void setTweetInfo(Tweet info) {
@@ -120,4 +125,70 @@ public class Marker implements OmicronTouchListener {
 	public Tweet getTweetInfo() {
 		return tweetInfo;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(this.tweetID == ((Tweet)obj).getTweetID())
+			return true;
+		return false;
+	}
+}
+
+class MarkerInfoPanel {
+
+	PApplet p;
+	Marker parent;
+	Button addUser;
+	
+	float x1, x2, y1, y2;
+	
+	public MarkerInfoPanel(Marker parent, PApplet papplet) {
+		this.parent = parent;
+		this.p = papplet;
+		
+		x1 = Utils.scale(infoX); y1 = Utils.scale(infoY);
+		x2 = Utils.scale(infoX+infoWidth); y2 = Utils.scale(infoY+infoHeight);
+		
+		Variable buttonVariable = new Variable();
+		buttonVariable.setPlot(Utils.scale(infoX + infoWidth/2 - 30), 
+				Utils.scale(infoY + infoHeight - 15), 
+				Utils.scale(infoX + infoWidth/2 + 30), 
+				Utils.scale(infoY + infoHeight - 3));
+		buttonVariable.setParent(p);
+		
+		addUser = new Button(buttonVariable, "Add Person");
+		addUser.setTextSize((int)Utils.scale(8));
+	}
+	
+	public void draw() {
+		p.pushStyle();
+		p.fill(EnumColor.GRAY.getValue());
+		p.rectMode(PApplet.CORNERS);
+		p.rect(x1, y1, x2, y2, Utils.scale(5));
+		p.fill(EnumColor.BLACK.getValue());
+		p.textSize(Utils.scale(8));
+		p.text(parent.getInfoText(), x1+Utils.scale(5), y1+Utils.scale(5), 
+				x2-Utils.scale(5), y2-Utils.scale(5));
+		p.popStyle();
+		
+		addUser.draw();
+	}
+	
+	public void touchDown(int id, float x1, float y1, float x2, float y2) {
+		
+		if(this.addUser.containsPoint(x1, y1)) {
+			if(Map.getSavedPeople() != null) {
+				parent.listener.markerUserSelected(parent);
+//				this.addUser.setPressed(true);
+			}
+		}
+	}
+	
+	public boolean containsPoint(float x, float y) {
+		if(x > x1 && x < x2 && y > y1 && y < y2)
+			return true;
+		
+		return false;
+	}
+	
 }
