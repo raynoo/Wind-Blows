@@ -77,8 +77,10 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 		
 		imageList = new ArrayList<PImage>();
 		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_greyscale.png"));
-		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_PopulationDensity.png"));
-		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_DayTimePopulation.png"));
+		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_PopulationDensity_1.png"));
+		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map_DayTimePopulation_1.png"));
+		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_borders.png"));
+		imageList.add(parent.loadImage(Utils.getProjectPath() + File.separator + "images/Vastopolis_Map.png"));
 		mapImage = imageList.get(curImage);
 	}
 
@@ -216,6 +218,8 @@ public class NewMap extends Sketch implements OmicronTouchListener, FilterListen
 		case 0: return "Image Type : Greyscaled";
 		case 1: return "Image Type : Population Density";
 		case 2: return "Image Type : Population Density during day";
+		case 3: return "Image Type : County Map";
+		case 4: return "Image Type : Political";
 		default: return "Image Type : Greyscaled";
 		}
 	}
