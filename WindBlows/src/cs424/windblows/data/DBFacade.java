@@ -94,7 +94,7 @@ public class DBFacade {
 		
 		// convert the date to format 
 		StringBuffer sql = new StringBuffer();
-		sql.append("select lat, long, MicroBlogs.tweet_id, person_id, categoryId ");
+		sql.append("select lat, long, MicroBlogs.tweet_id, person_id, keyword_id ");
 		sql.append(" from Microblogs inner join TweetCategory on TweetCategory.tweet_id = Microblogs.tweet_id ");
 		sql.append("where date == '");
 		sql.append(Utils.getFormattedDate(filter.getDate()));
@@ -145,7 +145,7 @@ public class DBFacade {
 				 t.setLon(db.getDouble("long"));
 				 t.setTweetID(db.getInt("tweet_id"));
 				 t.setUserID(db.getInt("person_id"));
-				 t.setCategoryId(db.getInt("categoryId"));
+				 t.setCategoryId(db.getInt("keyword_id"));
 				 list.add(t);
 			 }
 		}

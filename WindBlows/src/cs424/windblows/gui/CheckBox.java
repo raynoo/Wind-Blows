@@ -1,10 +1,9 @@
 package cs424.windblows.gui;
 
-import java.io.File;
-
 import omicronAPI.OmicronTouchListener;
 import processing.core.PApplet;
 import processing.core.PShape;
+import cs424.windblows.application.ColorCodes;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
@@ -33,7 +32,7 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 	public CheckBox(Variable data) {
 		super(data);
 		isSelected = false;
-		check = parent.loadShape(Utils.getProjectPath() + File.separator + "images/black_check.svg");
+		check = parent.loadShape("images/black_check.svg");
 	}
 	
 	@Override
@@ -54,11 +53,14 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 		parent.pushStyle();
 		
 		parent.fill(EnumColor.WHITE.getValue());
-		parent.rectMode(PApplet.CORNER);
+		
 		parent.rectMode(PApplet.CORNER);
 		parent.rect(plotX1, plotY1, boxWidth, boxHeight, Utils.scale(3));
 		
-		
+		if(ColorCodes.isAvailabe(this.id)){
+			parent.fill(ColorCodes.getColor(id));
+			parent.rect(plotX1 + boxWidth + Utils.scale(5), plotY1, Utils.scale(68), boxHeight );
+		}
 		if(isSelected){
 			parent.shape(check, plotX1, plotY1, imageSize, imageSize);
 		}		
@@ -85,8 +87,13 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 				listener.checkboxDisabled(this.id);
 			}
 			else {
-				isSelected = true;
-				listener.checkboxEnabled(this.id);
+				if(this.id == KeywordsSketch.AND || this.id == KeywordsSketch.OR){
+					isSelected = true;
+					listener.checkboxEnabled(this.id);
+				}else if(ColorCodes.isAvailabe()){
+					isSelected = true;
+					listener.checkboxEnabled(this.id);
+				}
 			}
 		}
 	}
@@ -107,5 +114,7 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 
 	@Override
 	public void touchUp(int ID, float xPos, float yPos, float xWidth, float yWidth){
+	
 	}
+	
 }

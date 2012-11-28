@@ -16,7 +16,7 @@ import processing.core.PApplet;
 public class Marker implements OmicronTouchListener {
 	
 	Location location;
-	int tweetID, userID;
+	int tweetID, userID, categoryID;
 	Tweet tweetInfo; String infoText;
 	MarkerInfoPanel infoPanel;
 	
@@ -31,14 +31,23 @@ public class Marker implements OmicronTouchListener {
 	
 	//coordinates are already scaled while creating markers.
 	//ie pass in scaled coordinates.
-	public Marker(float centerX, float centerY, float radius, PApplet papplet, int tweetid) {
+	public Marker(float centerX, float centerY, float radius, PApplet papplet, int tweetid, int catId) {
 		this.centerX = centerX;
 		this.centerY = centerY;
 		this.radius = Utils.scale(radius);
 		this.p = papplet;
 		this.tweetID = tweetid;
+		this.categoryID = catId;
 	}
 	
+	public int getCategoryID() {
+		return categoryID;
+	}
+
+	public void setCategoryID(int categoryID) {
+		this.categoryID = categoryID;
+	}
+
 	public void setColor(int color) {
 		this.color = color;
 	}
