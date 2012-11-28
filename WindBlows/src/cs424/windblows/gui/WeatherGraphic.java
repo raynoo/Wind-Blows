@@ -32,7 +32,7 @@ public class WeatherGraphic extends Sketch implements FilterListener{
 		yWeather = plotY1+scale(5);
 		imageSize = scale(50);
 		
-		xWind = plotX1;
+		xWind = plotX1 - Utils.scale(10);
 		yWind = plotY1+scale(30);
 		windImage = scale(20);
 		
@@ -57,7 +57,7 @@ public class WeatherGraphic extends Sketch implements FilterListener{
 		parent.textAlign(PApplet.CENTER);
 		parent.textSize(scale(13));
 		parent.text(getString(curWeather.getWeather()), xWeather + imageSize/2, yWeather + scale(70));
-		parent.text(getString(curWeather.getWindDirection()), xWind , yWind + scale(45));
+		parent.text(getString(curWeather.getWindDirection()) + " " + curWeather.getWindSpeed() + " MPH", xWind , yWind + scale(45));
 		parent.popStyle();
 	}
 	

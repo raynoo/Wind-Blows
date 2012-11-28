@@ -135,12 +135,12 @@ public class DBFacade {
 			sql.append(filter.getCategories().size());
 		}
 		
-		if(filter.getTopLeftLat() != null) {
-			sql.append(" and lat < " + filter.getTopLeftLat());
-			sql.append(" and lat > " + filter.getBottomRightLat());
-			sql.append(" and long < " + filter.getTopLeftLong());
-			sql.append(" and long > " + filter.getBottomRightLong());
-		}
+//		if(filter.getTopLeftLat() != null) {
+//			sql.append(" and lat < " + filter.getTopLeftLat());
+//			sql.append(" and lat > " + filter.getBottomRightLat());
+//			sql.append(" and long < " + filter.getTopLeftLong());
+//			sql.append(" and long > " + filter.getBottomRightLong());
+//		}
 		
 		//System.out.println("<DEBUG>" + sql.toString());
 		
