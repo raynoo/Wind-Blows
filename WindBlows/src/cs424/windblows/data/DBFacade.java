@@ -357,4 +357,24 @@ public class DBFacade {
 		}
 		return tweet;
 	}
+	
+	
+	public HashMap<Date, Weather> getWeatherData(){
+		HashMap<Date, Weather> data = new HashMap<Date, Weather>();
+		
+		String sql = "select * from Weather";
+		if(db.connect()){
+			db.query(sql);
+			while(db.next()) {
+				Weather w = new Weather();
+				w.setDate(Utils.getDate(db.getString("Date")));
+				w.setWindSpeed(db.getInt("Average_Wind_Speed"));
+				w.setWindDirection(db.getString("Wind_Direction"));
+				w.setWeather(db.getString("Weather"));
+				data.put(w.getDate(), w);
+			}
+		}
+		
+		return data;
+	}
 }

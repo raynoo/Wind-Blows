@@ -45,6 +45,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 	protected KeywordsSketch keywords;
 	protected SliderSketch slider;
 	protected WordCloud wordcloud;
+	protected DateInfo dateinfo;
+	protected WeatherGraphic weather;
 	protected ArrayList<Sketch> sketches = new ArrayList<Sketch>();
 	
 	/***************************************************************/
@@ -160,7 +162,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		data.setPlot(datePanelX, datePanelY, datePanelX+datePanelWidth, datePanelY+datePanelHeight);
 		data.setParent(this);
 		
-		DateInfo dateinfo = new DateInfo(data);
+		dateinfo = new DateInfo(data);
 		dateinfo.setActive(true);
 		
 		addSketch(dateinfo);
@@ -171,7 +173,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		data.setPlot(weatherGraphicX, weatherGraphicY, weatherGraphicX+weatherGraphiclWidth, 
 				weatherGraphicY+weatherGraphicHeight);
 		data.setParent(this);
-		WeatherGraphic weather = new WeatherGraphic(data);
+		weather = new WeatherGraphic(data);
 		weather.setActive(true);
 		addSketch(weather);
 	}
