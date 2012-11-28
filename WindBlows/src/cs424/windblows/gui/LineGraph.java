@@ -21,6 +21,7 @@ import cs424.windblows.application.Utils;
 import cs424.windblows.application.Variable;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.listeners.FilterListener;
+import cs424.windblows.application.ColorCodes;
 
 public class LineGraph extends Sketch  implements FilterListener{
 
@@ -50,6 +51,11 @@ public class LineGraph extends Sketch  implements FilterListener{
 		fontSize = scale(12);
 		font = parent.createFont("Helvetica", fontSize, true);
 		
+		yminValue = 0;
+		ymaxValue = 0;
+		countValues.clear();
+		categories.clear();
+		
 		getData();
 	}
 	
@@ -64,15 +70,16 @@ public class LineGraph extends Sketch  implements FilterListener{
 		
 		if(curFilter.getCondition() == KeywordsSketch.OR){
 			
-			if(categories.size() > 0)
+			if(categories.size() > 0){
 				cat_id = categories.get(categories.size() - 1);
+				this.countValues.add(DBFacade.getInstance().getCategoryCounts(curFilter, cat_id));
+			}
 			else
-				cat_id = 0;
-			
-			this.countValues.add(DBFacade.getInstance().getCategoryCounts(curFilter, cat_id));
+				cat_id = 0;			
 		}
 		else{
 			this.countValues.add(DBFacade.getInstance().getCategoryCounts(curFilter, 0));
+			categories.add(0);
 		}
 		
 		setAxisLimits();		
@@ -218,7 +225,7 @@ public class LineGraph extends Sketch  implements FilterListener{
 		graphHeight = plotHeight - marginY;
 		
 		//x axis markings
-	    int xintervals = xmaxValue;
+	    int xintervals = (xmaxValue == 0) ? 1 : xmaxValue;
 	    int index = 0;
 	    int i = 1;
 	    Date minDate = Utils.getDate(Constants.minDate);
@@ -278,10 +285,28 @@ public class LineGraph extends Sketch  implements FilterListener{
 	
 	private void plotChart(){			
 		
-		for(HashMap<Date,Integer> map : countValues){		
-			plotLine(map,line_color);
-		}
+		int index = 0;
+		int color = 0;
+		int cat_id = 0;
 		
+		//System.out.println(countValues);
+		
+		if(categories.size() > 0){
+		
+			for(HashMap<Date,Integer> map : countValues){	
+				
+				if(categories.size() > index)
+					cat_id = categories.get(index);
+				else
+					cat_id = 0;
+
+				color = ColorCodes.getColor(cat_id);					
+				
+				plotLine(map,color);
+				index++;
+			}
+		
+		}
 		drawYAxis();
 		
 		drawXAxis();
