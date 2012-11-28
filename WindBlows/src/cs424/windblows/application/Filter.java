@@ -16,7 +16,16 @@ public class Filter {
 	protected Date date;
 	protected Float topLeftLat, topLeftLong, bottomRightLat, bottomRightLong;
 	protected int condition;
+	protected int time;
 	
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+
 	public int getCondition() {
 		return condition;
 	}

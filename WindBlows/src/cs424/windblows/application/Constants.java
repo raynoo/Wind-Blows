@@ -37,7 +37,7 @@ public class Constants {
 	public static int infoX = 235;
 	public static int infoY = 20;
 	public static int infoWidth = 170;
-	public static int infoHeight = 70;
+	public static int infoHeight = 60;
 	
 	//Map buttons
 	public static int zoomInButtonX = 602;
@@ -57,47 +57,47 @@ public class Constants {
 	public static int playButtonHeight = (int) Utils.scale(15);
 	
 	//Keyword Panel outline
-	public static int keywordPanelX = 640;
-	public static int keywordPanelY = 85;
-	public static int keywordPanelWidth = 320;
-	public static int keywordPanelHeight = 235;
+	public static int keywordPanelX = (int) Utils.scale(640);
+	public static int keywordPanelY = (int) Utils.scale(85);
+	public static int keywordPanelWidth = (int) Utils.scale(320);
+	public static int keywordPanelHeight = (int) Utils.scale(335);
 	
 	//Date Panel outline
-	public static int datePanelX = 640;
-	public static int datePanelY = 0;
-	public static int datePanelWidth = 160;
-	public static int datePanelHeight = 85;
+	public static int datePanelX = (int) Utils.scale(640);
+	public static int datePanelY = (int) Utils.scale(0);
+	public static int datePanelWidth = (int) Utils.scale(160);
+	public static int datePanelHeight = (int) Utils.scale(85);
 	
 	//Weather Panel outline
-	public static int weatherGraphicX = 800;
-	public static int weatherGraphicY = 0;
-	public static int weatherGraphiclWidth = 160;
-	public static int weatherGraphicHeight = 85;
+	public static int weatherGraphicX = (int) Utils.scale(800);
+	public static int weatherGraphicY = (int) Utils.scale(0);
+	public static int weatherGraphiclWidth = (int) Utils.scale(160);
+	public static int weatherGraphicHeight = (int) Utils.scale(85);
 	
 	//Word Cloud Panel
-	public static int wcPanelX = 960;
-	public static int wcPanelY = 0;
-	public static int wcPanelWidth = 400;
-	public static int wcPanelHeight = 104;
+	public static int wcPanelX = (int) Utils.scale(960);
+	public static int wcPanelY = (int) Utils.scale(0);
+	public static int wcPanelWidth = (int) Utils.scale(400);
+	public static int wcPanelHeight = (int) Utils.scale(104);
 	
-	public static int wcX = 1024;
-	public static int wcY = 0;
-	public static int wcWidth = 278;
-	public static int wcHeight = 104;
+	public static int wcX = (int) Utils.scale(1024);
+	public static int wcY = (int) Utils.scale(0);
+	public static int wcWidth = (int) Utils.scale(278);
+	public static int wcHeight = (int) Utils.scale(104);
 	
 	//Background to draw over map
-	public static int backX1 = 640;
-	public static int backY1 = 0;
-	public static int backX2 = 1360;
-	public static int backY2 = 384;
+	public static int backX1 = (int) Utils.scale(640);
+	public static int backY1 = (int) Utils.scale(0);
+	public static int backX2 = (int) Utils.scale(1360);
+	public static int backY2 = (int) Utils.scale(384);
 	//w:780 h:384
 	
 
 	//Line Graph Panel
-	public static int graphX = 990;
-	public static int graphY = 180;
-	public static int graphWidth = 350;
-	public static int graphHeight = 200;
+	public static int graphX = (int) Utils.scale(990);
+	public static int graphY = (int) Utils.scale(180);
+	public static int graphWidth = (int) Utils.scale(350);
+	public static int graphHeight = (int) Utils.scale(200);
 
 	/*//Line Graph Panel outline
 	public static int lineGraphPanelX = 960;
@@ -106,9 +106,9 @@ public class Constants {
 	public static int lineGraphPanelHeight = 140;*/
 	
 	//Date Panel outline
-	public static int tablePanelX = 960;
-	public static int tablePanelY = 243;
-	public static int tablePanelWidth = 400;
-	public static int tablePanelHeight = 140;
+	public static int tablePanelX = (int) Utils.scale(960);
+	public static int tablePanelY = (int) Utils.scale(243);
+	public static int tablePanelWidth = (int) Utils.scale(400);
+	public static int tablePanelHeight = (int) Utils.scale(140);
 
 }

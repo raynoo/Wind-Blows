@@ -81,9 +81,11 @@ class CheckBox extends Sketch implements OmicronTouchListener{
 	public void touchDown(int ID, float xPos, float yPos, float xWidth, float yWidth){
 		if(!isActive) return;
 		// check if the box is touched
+		
 		if(!(Utils.isPresent(plotX1, plotX1 + boxWidth, xPos)
 		   && Utils.isPresent(plotY1, plotY1 + boxHeight, yPos))) return;
 		else{
+			
 			if(isSelected){
 				isSelected = false;
 				listener.checkboxDisabled(this.id);

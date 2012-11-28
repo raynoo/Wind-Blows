@@ -114,6 +114,8 @@ public class Main extends PApplet implements OmicronTouchListener {
 		slider = new SliderSketch(data);
 		slider.setActive(true);
 		sketches.add(slider);
+		slider.addListener(dateinfo);
+		slider.addListener(weather);
 		slider.addListener(map);
 	}
 	
@@ -127,7 +129,7 @@ public class Main extends PApplet implements OmicronTouchListener {
 		keywords = new KeywordsSketch(data);
 		keywords.setActive(true);
 		keywords.setListener(map);
-		
+		keywords.setTimeListener(map);
 		sketches.add(keywords);
 	}
 		

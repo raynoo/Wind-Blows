@@ -119,6 +119,14 @@ public class DBFacade {
 			return list; // returns if no category was selected
 		}
 		
+		if(filter.getTime() > 0 && filter.getTime() != KeywordsSketch.NONE) {
+			if(filter.getTime() == KeywordsSketch.NIGHT){
+				sql.append(" and time_id != 1");
+			}
+			else{
+				sql.append(" and time_id == 1");
+			}
+		}
 		
 		// if condition is and
 		if(filter.getCondition() == KeywordsSketch.AND){

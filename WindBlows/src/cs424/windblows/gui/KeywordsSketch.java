@@ -11,10 +11,16 @@ import cs424.windblows.application.Variable;
 import cs424.windblows.data.DBFacade;
 import cs424.windblows.listeners.CheckBoxEventListener;
 import cs424.windblows.listeners.FilterListener;
+import cs424.windblows.listeners.TimeChanged;
 
 public class KeywordsSketch extends Sketch implements OmicronTouchListener, CheckBoxEventListener{
 	public static final int AND = 99;
 	public static final int OR = 98;
+	
+	public static final int DAY = 100;
+	public static final int NIGHT = 101;
+	public static final int NONE = 102;
+
 	
 	protected ArrayList<CheckBox> checks;
 	protected ArrayList<CheckBox> condition;
@@ -23,10 +29,22 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 	protected float yBuff = Utils.scale(20);
 	
 	protected HashMap<Integer, String> keyMap;
-	protected CheckBox and, or;
+	protected CheckBox and, or, day, night, none;
 	
 	protected ArrayList<FilterListener> listeners = new ArrayList<FilterListener>();
+	protected TimeChanged timeListener;
 	
+	
+	public TimeChanged getTimeListener() {
+		return timeListener;
+	}
+
+
+	public void setTimeListener(TimeChanged timeListener) {
+		this.timeListener = timeListener;
+	}
+
+
 	public KeywordsSketch(Variable data) {
 		super(data);
 		
@@ -57,26 +75,61 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 			
 			count++;
 		}
+		
+		
+		for(CheckBox box : checks){
+			box.setActive(true);
+		}
+		
+		initAndOr();
+		initDayNight();
+	}
+	
+	
+	protected void initAndOr(){
+		Variable dat = new Variable();
+		dat.setParent(parent);
 		dat.setLabel("AND");
-		dat.setPlot(plotX1 + Utils.scale(100) + xBuff, plotY1 + (yBuff * 11), 0, 0);
+		dat.setPlot(plotX1 + Utils.scale(50) + xBuff, plotY1 + (yBuff * 11), 0, 0);
 		and = new CheckBox(dat);
 		and.setActive(true);
 		and.setId(AND);
 		and.setListener(this);
 		
 		dat.setLabel("OR");
-		dat.setPlot(plotX1 + Utils.scale(100) + xBuff + Utils.scale(70), plotY1 + (yBuff * 11), 0, 0);
+		dat.setPlot(plotX1 + Utils.scale(50) + xBuff, plotY1 + (yBuff * 12), 0, 0);
 		or = new CheckBox(dat);
 		or.setActive(true);
 		or.setId(OR);
 		or.setListener(this);
 		or.setSelected(true);
-		
-		for(CheckBox box : checks){
-			box.setActive(true);
-		}
 	}
 	
+	protected void initDayNight(){
+		Variable dat = new Variable();
+		dat.setParent(parent);
+		dat.setLabel("Day (06:00 to 17:59)");
+		dat.setPlot(plotX1 + Utils.scale(150) + xBuff, plotY1 + (yBuff * 11), 0, 0);
+		day = new CheckBox(dat);
+		day.setActive(true);
+		day.setId(DAY);
+		day.setListener(this);
+		
+		dat.setLabel("Night (18:00 to 5:59)");
+		dat.setPlot(plotX1 + Utils.scale(150) + xBuff, plotY1 + (yBuff * 12), 0, 0);
+		night = new CheckBox(dat);
+		night.setActive(true);
+		night.setId(NIGHT);
+		night.setListener(this);
+		
+		dat.setLabel("All Day");
+		dat.setPlot(plotX1 + Utils.scale(150) + xBuff, plotY1 + (yBuff * 13), 0, 0);
+		none = new CheckBox(dat);
+		none.setActive(true);
+		none.setId(NONE);
+		none.setListener(this);
+		none.setSelected(true);
+	}
 	@Override
 	protected void draw() {
 		parent.pushStyle();
@@ -85,13 +138,17 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 		parent.rect(plotX1, plotY1, Utils.scale(100) * 3, (float) (yBuff * 10.5), Utils.scale(10));
 		
 		parent.fill(EnumColor.OFFWHITE.getValue());
-		parent.rect(plotX1 + Utils.scale(100), plotY1 + (float) (yBuff * 10.7),  Utils.scale(70) * 2, Utils.scale(25), Utils.scale(5));
-		
+		parent.rect(plotX1 + Utils.scale(50), plotY1 + (float) (yBuff * 10.7),  Utils.scale(70), Utils.scale(55), Utils.scale(5));
+		parent.rect(plotX1 + Utils.scale(150), plotY1 + (float) (yBuff * 10.7),  Utils.scale(75) * 2, Utils.scale(75), Utils.scale(5));
 		for(CheckBox box : checks){
 			box.draw();
 		}
 		and.draw();
 		or.draw();
+		day.draw();
+		night.draw();
+		none.draw();
+		
 		parent.popStyle();
 	}
 	
@@ -103,6 +160,9 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 		}
 		and.touchDown(ID, xPos, yPos, xWidth, yWidth);
 		or.touchDown(ID, xPos, yPos, xWidth, yWidth);
+		day.touchDown(ID, xPos, yPos, xWidth, yWidth);
+		night.touchDown(ID, xPos, yPos, xWidth, yWidth);
+		none.touchDown(ID, xPos, yPos, xWidth, yWidth);
 	}
 
 	@Override
@@ -134,6 +194,18 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 					listenersConditionChanged(AND);
 					ColorCodes.setOR(false);
 			break;
+			
+		case DAY: 	timeListener.timeChanged(NONE);
+					none.setSelected(true);
+		break;
+
+		case NIGHT:	timeListener.timeChanged(NONE);
+					none.setSelected(true);
+			break;
+
+		case NONE:	none.setSelected(true);
+					day.setSelected(false);
+					break;
 		default: listenersCategoryRemoved(id);
 					ColorCodes.removeMapping(id);
 			break;
@@ -147,11 +219,29 @@ public class KeywordsSketch extends Sketch implements OmicronTouchListener, Chec
 					listenersConditionChanged(AND);
 					ColorCodes.setOR(false);
 			break;
-		case OR: 	and.setSelected(false);
+		case OR: 	
+					and.setSelected(false);
 					resetCheckboxes();
 					listenersConditionChanged(OR);
 					ColorCodes.setOR(true);
 			break;
+		
+		case DAY: 	timeListener.timeChanged(DAY);
+					night.setSelected(false);
+					none.setSelected(false);
+					// listeners
+				break;
+				
+		case NIGHT: timeListener.timeChanged(NIGHT);
+					day.setSelected(false);
+					none.setSelected(false);
+			break;
+	
+		case NONE:	timeListener.timeChanged(NONE);
+					night.setSelected(false);
+		day.setSelected(false);
+			break;
+	
 		default: 	listenersCategoryAdded(id);
 					ColorCodes.genMappings(id);
 			break;
