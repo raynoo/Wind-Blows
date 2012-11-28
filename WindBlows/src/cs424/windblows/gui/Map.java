@@ -5,6 +5,8 @@ import static cs424.windblows.application.Constants.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import omicronAPI.OmicronTouchListener;
 
@@ -41,10 +43,14 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 	Date min = Utils.getDate("4/30/2011"), max = Utils.getDate("5/20/2011"), currentDate;
 	ArrayList<Tweet> tweetData;
 	ArrayList<Marker> markers;
-	Marker currentMarker;
+	Marker currentMarker, previousMarker;
 	boolean showMarkerInfo;
 	
 	boolean filterChanged = true;
+	
+	//list to save people
+	static ArrayList<Integer> savedPeople = new ArrayList<Integer>();
+	HashMap<Integer, List<Tweet>> userTweets;
 	
 	public Map(Variable data) {
 		super(data);
@@ -130,8 +136,13 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 		for(Button b:mapButtons)
 			b.draw();
 		
-		if(showMarkerInfo)
+		if(showMarkerInfo) {
+			currentMarker.selected = true;
 			currentMarker.displayInfo();
+
+			if(previousMarker != null)
+				previousMarker.selected = false;
+		}
 	}
 	
 	public Location[] getBoundaryLatLong() {
@@ -197,7 +208,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 				float x = PApplet.map((float)t.getLon(), topLeftLon, bottomRightLon, currentImageTopLeftX, currentImageBottomRightX);
 				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
 
-				markers.add(new Marker(x, y, Utils.scale(10), this.parent, t.getTweetID()));
+				markers.add(new Marker(x, y, 10, this.parent, t.getTweetID()));
 			}
 			filterChanged = false;
 		}
@@ -306,27 +317,39 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 		//on map
 		else {
 			
+			if(currentMarker != null &&
+				currentMarker.infoPanel != null && 
+				currentMarker.infoPanel.containsPoint(arg1, arg2)) {
+				currentMarker.infoPanel.touchDown(arg0, arg1, arg2, arg3, arg4);
+				return;
+			}
+			
 			for(Marker m : markers) {
 				if(m.containsPoint(arg1, arg2)) {
+					m.selected = true;
 					m.touchDown(arg0, arg1, arg2, arg3, arg4);
 					return;
 				}
 			}
 			
-//			if(currentDate.equals(max)) {
-//				currentDate = min;
-//				curFilter.setDate(min);
-//			}
-//			else {
-//				currentDate = Utils.addDays(currentDate, 1);
-//				curFilter.setDate(currentDate);
-//			}
 			filterChanged = true;
 			System.out.println(currentDate);
 			showMarkerInfo = false;
 		}
 	}
 	
+	public HashMap<Integer, List<Tweet>> getSavedPeoplesTweets() {
+		userTweets = new HashMap<Integer, List<Tweet>>();
+		
+		for(int id : savedPeople) {
+			userTweets.put(id, DBFacade.getInstance().getTweetsByUser(id));
+		}
+		return userTweets;
+	}
+	
+	public static ArrayList<Integer> getSavedPeople() {
+		return savedPeople;
+	}
 
 	@Override
 	public void touchMove(int arg0, float arg1, float arg2, float arg3,
@@ -360,7 +383,33 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 
 	@Override
 	public void markerSelected(Marker m) {
+		this.previousMarker = this.currentMarker;
 		this.currentMarker = m;
 		this.showMarkerInfo = true;
 	}
+
+	@Override
+	public void markerUserSelected(Marker m) {
+		if(addUser(m.getUserID()))
+			m.infoPanel.addUser.setPressed(true);
+	}
+	
+	@Override
+	public void markerUserUnselected(Marker m) {
+		removeUser(m.getUserID());
+	}
+
+	public boolean addUser(int id) {
+		if(! this.savedPeople.contains(id)) {
+			System.out.println("Map.markerUserSelected(): Added user " + id);
+			this.savedPeople.add(id);
+			return true;
+		}
+		return false;
+	}
+	
+	public void removeUser(int id) {
+		this.savedPeople.remove(new Integer(id));
+	}
+
 }

@@ -37,7 +37,7 @@ public class Constants {
 	public static int infoX = 235;
 	public static int infoY = 20;
 	public static int infoWidth = 170;
-	public static int infoHeight = 60;
+	public static int infoHeight = 70;
 	
 	//Map buttons
 	public static int zoomInButtonX = 602;
