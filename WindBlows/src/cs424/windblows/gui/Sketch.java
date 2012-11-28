@@ -8,7 +8,7 @@ import cs424.windblows.application.Variable;
  * Super class for all the GUI elements in the visualization
  * @author Gaurav
  */
-public class Sketch {
+public class Sketch{
 
 	/** These variables restrict the display area for this sketch. 
 	 * You should try to contain the drawing based on these parameters 

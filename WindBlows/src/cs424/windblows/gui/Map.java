@@ -73,7 +73,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 	
 	void initButtons() {
 		Variable data = new Variable();
-		data.setParent(this.parent);
+		data.setParent(Sketch.parent);
 		
 		data.setPlot(scale(zoomInButtonX), scale(zoomInButtonY-zoomButtonHeight-scale(3)), 
 				scale(zoomInButtonX+zoomButtonWidth), 
@@ -209,6 +209,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 				float y = PApplet.map((float)t.getLat(), topLeftLat, bottomRightLat, currentImageTopLeftY, currentImageBottomRightY);
 
 				markers.add(new Marker(x, y, 10, this.parent, t.getTweetID()));
+				markers.add(new Marker(x, y, Utils.scale(6), Sketch.parent, t.getTweetID()));
 			}
 			filterChanged = false;
 		}
@@ -231,6 +232,7 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 			curFilter = new Filter();
 			currentDate = min;
 			curFilter.setDate(currentDate);
+			curFilter.setCondition(KeywordsSketch.OR);
 		}
 		tweetData = DBFacade.getInstance().getTweets(curFilter);
 	}
@@ -380,7 +382,12 @@ public class Map extends Sketch implements OmicronTouchListener, FilterListener,
 		curFilter.setDate(date);
 		filterChanged = true;
 	}
-
+	
+	@Override
+	public void conditionChanged(int condition) {
+		curFilter.setCondition(condition);
+		filterChanged = true;
+	}
 	@Override
 	public void markerSelected(Marker m) {
 		this.previousMarker = this.currentMarker;
