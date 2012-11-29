@@ -5,15 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import omicronAPI.OmicronTouchListener;
-import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
+import cs424.windblows.application.ColorCodes;
 import cs424.windblows.application.Constants;
 import cs424.windblows.application.EnumColor;
 import cs424.windblows.application.Filter;
@@ -114,10 +110,10 @@ public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 		
 		float graphX, graphY, graphHeight, graphWidth;
 		
-		graphX = plotX1 + marginX;
-		graphY = plotY1 + plotHeight - marginY;
-		graphWidth = plotWidth - marginX;
-		graphHeight = plotHeight - marginY;
+		graphX = scale(plotX1 + marginX);
+		graphY = scale(plotY1 + plotHeight - marginY);
+		graphWidth = scale(plotWidth - marginX);
+		graphHeight = scale(plotHeight - marginY);
 		
 		int difference = ymaxValue - yminValue;	    
 	    int intervals = (int) Math.floor(difference/yintervals);
@@ -178,10 +174,10 @@ public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 		
 		float graphX, graphY, graphHeight, graphWidth;
 		
-		graphX = plotX1 + marginX;
-		graphY = plotY1 + plotHeight - marginY;
-		graphWidth = plotWidth - marginX;
-		graphHeight = plotHeight - marginY;
+		graphX = scale(plotX1 + marginX);
+		graphY = scale(plotY1 + plotHeight - marginY);
+		graphWidth = scale(plotWidth - marginX);
+		graphHeight = scale(plotHeight - marginY);
 		
 		int difference = ymaxValue - yminValue;	    
 	    int intervals = (int) Math.floor(difference/yintervals);
@@ -219,10 +215,10 @@ public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 		
 		float graphX, graphY, graphHeight, graphWidth;
 		
-		graphX = plotX1 + marginX;
-		graphY = plotY1 + plotHeight - marginY;
-		graphWidth = plotWidth - marginX;
-		graphHeight = plotHeight - marginY;
+		graphX = scale(plotX1 + marginX);
+		graphY = scale(plotY1 + plotHeight - marginY);
+		graphWidth = scale(plotWidth - marginX);
+		graphHeight = scale(plotHeight - marginY);
 		
 		//x axis markings
 	    int xintervals = (xmaxValue == 0) ? 1 : xmaxValue;
@@ -268,10 +264,10 @@ public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 		
 		float graphX, graphY, graphHeight, graphWidth;
 		
-		graphX = plotX1 + marginX;
-		graphY = plotY1 + plotHeight - marginY;
-		graphWidth = plotWidth - marginX;
-		graphHeight = plotHeight - marginY;
+		graphX = scale(plotX1 + marginX);
+		graphY = scale(plotY1 + plotHeight - marginY);
+		graphWidth = scale(plotWidth - marginX);
+		graphHeight = scale(plotHeight - marginY);
 		
 		//x and y axis
 		parent.pushStyle();
@@ -279,7 +275,7 @@ public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 	    parent.stroke(line_color);
 		parent.line(graphX, graphY, graphX, graphY - graphHeight);
 		parent.line(graphX, graphY, graphX + graphWidth, graphY);
-		parent.text(xlabel,graphX + (float)(0.35*plotWidth), (float) (graphY + 0.7 * marginY));	
+		parent.text(xlabel,graphX + scale((float)(0.35*plotWidth)), (float) (graphY + scale((float) (0.7 * marginY))));	
 		parent.popStyle();
 	}
 	
@@ -328,6 +324,9 @@ public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 
 	@Override
 	public void categoryAdded(int categoryId) {
+		
+		
+		
 		curFilter.addCategory(categoryId);
 		
 		if(curFilter.getCondition() == KeywordsSketch.OR){
@@ -346,7 +345,8 @@ public class LineGraph extends Sketch  implements FilterListener, TimeChanged{
 
 	@Override
 	public void categoryRemoved(int categoryId) {
-		curFilter.removeCategory(categoryId);
+		if( categoryId>= 100) return;
+		
 		
 		if(curFilter.getCondition() == KeywordsSketch.OR){
 
